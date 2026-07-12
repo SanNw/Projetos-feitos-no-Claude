@@ -8,6 +8,7 @@ import { FavoritesScreen } from "@/screens/FavoritesScreen";
 import { RouteSelectorScreen } from "@/screens/RouteSelectorScreen";
 import { ManualDateScreen } from "@/screens/ManualDateScreen";
 import { DayDetailScreen } from "@/screens/DayDetailScreen";
+import { PaywallScreen } from "@/screens/PaywallScreen";
 import { colors } from "@/theme/colors";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -60,6 +61,11 @@ export function RootNavigator() {
       <Stack.Screen name="RouteSelector" component={RouteSelectorScreen} options={{ title: "Selecionar aeroporto" }} />
       <Stack.Screen name="ManualDate" component={ManualDateScreen} options={{ title: "Data manual" }} />
       <Stack.Screen name="DayDetail" component={DayDetailScreen} options={{ title: "Detalhes do voo" }} />
+      <Stack.Screen
+        name="Paywall"
+        component={PaywallScreen}
+        options={{ title: "Monitor de Passagens Pro", presentation: "modal" }}
+      />
     </Stack.Navigator>
   );
 }

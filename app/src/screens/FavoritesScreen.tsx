@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, Pressable, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/navigation/types";
 import { useSelectedRoute } from "@/context/RouteContext";
 import { useFavorites } from "@/context/FavoritesContext";
+import { usePremium } from "@/context/PremiumContext";
+import { FREE_FAVORITES_LIMIT } from "@/billing/constants";
 import { airportLabel } from "@/data/airports";
 import { colors } from "@/theme/colors";
 import { formatBRL } from "@/utils/currency";
@@ -10,9 +15,13 @@ import type { FavoriteRoute } from "@/types";
 export function FavoritesScreen() {
   const { favorites, removeFavorite, setAlertThreshold } = useFavorites();
   const { setRoute } = useSelectedRoute();
+  const { isPremium } = usePremium();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <View style={styles.container}>
+      <PlanBanner isPremium={isPremium} favoritesCount={favorites.length} onUpgrade={() => navigation.navigate("Paywall")} />
+
       {favorites.length === 0 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyText}>
@@ -42,6 +51,32 @@ export function FavoritesScreen() {
         />
       )}
     </View>
+  );
+}
+
+function PlanBanner({
+  isPremium,
+  favoritesCount,
+  onUpgrade,
+}: {
+  isPremium: boolean;
+  favoritesCount: number;
+  onUpgrade: () => void;
+}) {
+  if (isPremium) {
+    return (
+      <View style={styles.planBanner}>
+        <Text style={styles.planBannerText}>✨ Plano Pro ativo — rotas e alertas ilimitados</Text>
+      </View>
+    );
+  }
+  return (
+    <Pressable style={({ pressed }) => [styles.planBanner, styles.planBannerFree, pressed && styles.pressed]} onPress={onUpgrade}>
+      <Text style={styles.planBannerText}>
+        Plano grátis: {favoritesCount}/{FREE_FAVORITES_LIMIT} rotas com alerta usadas.
+      </Text>
+      <Text style={styles.planBannerLink}>Assinar Pro para rotas ilimitadas →</Text>
+    </Pressable>
   );
 }
 
@@ -96,6 +131,14 @@ function FavoriteCard({
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surfaceMuted },
+  planBanner: {
+    backgroundColor: colors.brand,
+    padding: 14,
+    gap: 2,
+  },
+  planBannerFree: { backgroundColor: colors.textPrimary },
+  planBannerText: { color: "#fff", fontWeight: "700", fontSize: 13 },
+  planBannerLink: { color: "#fff", fontSize: 12, opacity: 0.85, marginTop: 2 },
   empty: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32 },
   emptyText: { textAlign: "center", color: colors.textSecondary, lineHeight: 20 },
   pushHint: { color: colors.textSecondary, fontSize: 12, lineHeight: 17, marginBottom: 12 },

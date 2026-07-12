@@ -161,6 +161,74 @@ Limitações conhecidas / não testadas de ponta a ponta:
   offline sintético** para ele (ao contrário do calendário/preço do dia) —
   sem API, a tela mostra o estado vazio, o que é o comportamento honesto.
 
+## Monetização (paywall)
+
+**Modelo:** freemium, 2 planos (Grátis / Pro), sem tiers B2B — a skill
+`pricing` instalada é focada em SaaS B2B (per-seat, ARPU, churn); para um app
+de utilidade pessoal sem contas, o que se aproveita dela é o framework
+Good-Better (aqui virou só "Better", já que não há um terceiro tier que faça
+sentido) e a recomendação de freemium para produtos de baixo custo marginal
+por usuário gratuito e gatilho de upgrade claro por limite de uso.
+
+- **Métrica de valor / gatilho de upgrade:** número de rotas favoritas com
+  alerta de preço. Grátis: até `FREE_FAVORITES_LIMIT` (hoje 2, ver
+  `app/src/billing/constants.ts`). Pro: ilimitado. É o único diferenciador
+  real implementado — não invente outros (ex.: "sem anúncios") no paywall
+  sem construir a funcionalidade correspondente antes.
+- **Preços** (placeholder, em `billing/constants.ts`): R$ 14,90/mês ou
+  R$ 99,90/ano (~R$ 8,33/mês, "economize 44%"). São números de ancoragem
+  competitiva para apps de utilidade de viagem no Brasil, **não validados**
+  com os usuários reais do produto. Antes de lançar cobrança de verdade, rode
+  uma pesquisa de willingness-to-pay (método Van Westendorp, documentado na
+  skill `pricing` em `references/research-methods.md`) e ajuste aqui.
+- **Onde o gate acontece:** `FavoritesContext.addFavorite()` (`app/src/context/FavoritesContext.tsx`)
+  recusa adicionar (`{ ok: false, reason: "limit_reached" }`) quando
+  `!isPremium && favorites.length >= FREE_FAVORITES_LIMIT`; quem chama (hoje
+  `HomeScreen`) reage navegando para a tela `Paywall`. Isso é **gate só no
+  cliente** — coerente com o app não ter contas/autenticação hoje (favoritos
+  já são um "melhor esforço" sincronizado com o servidor, ver seção de
+  convenções abaixo), mas também significa que é tecnicamente contornável
+  (reinstalar o app, editar o AsyncStorage). Aceitável para o estágio atual;
+  reforçar isso exigiria contas de usuário reais, que não existem no MVP.
+
+### Provider de compras: mock hoje, RevenueCat é o caminho para produção
+
+`app/src/billing/` segue o mesmo padrão de fonte plugável já usado em
+`liveSource.ts` (server) — uma interface (`PurchaseProvider`, em `types.ts`)
+com uma implementação ativa (`mockProvider.ts`) trocável por uma real depois.
+
+**Por que só o mock está implementado:** o SDK padrão de compras in-app para
+Expo/React Native é o **RevenueCat** (`react-native-purchases`), mas é um
+módulo nativo — **não roda no Expo Go**. Adicionar essa dependência tiraria o
+projeto inteiro da compatibilidade com Expo Go (autolinking nativo passa a
+exigir `expo-dev-client` / `eas build` para *qualquer* tela, não só o
+paywall), uma mudança de fluxo de desenvolvimento que não foi pedida
+explicitamente. Em vez de arriscar isso silenciosamente, o paywall foi
+construído inteiro (UI, comparação de planos, gate de limite) contra um
+provider simulado que roda em Expo Go sem restrição: "Assinar" só marca um
+flag local (`AsyncStorage`) como premium, sem cobrança real.
+
+**Para conectar pagamento de verdade:**
+1. `npx expo install expo-dev-client && npm install react-native-purchases` —
+   a partir daqui, rode com `npx expo run:ios`/`run:android` ou EAS Build, não
+   mais Expo Go.
+2. Configure os produtos de assinatura mensal/anual no App Store Connect e no
+   Google Play Console, e o projeto correspondente no dashboard da RevenueCat.
+3. Crie `app/src/billing/revenueCatProvider.ts` implementando `PurchaseProvider`
+   (mesma interface do mock) e troque a exportação `provider` em
+   `billing/index.ts`.
+4. Não foi possível validar nada disso neste ambiente (sem conta RevenueCat,
+   sem dev client, sem simulador iOS/Android) — é um caminho documentado, não
+   testado.
+
+### Modo de demonstração
+
+A própria `PaywallScreen.tsx` deixa claro na UI que é uma simulação ("nenhuma
+cobrança real é feita"). Há também um componente `DevPremiumReset` exportado
+de `PaywallScreen.tsx` (não usado em nenhuma tela hoje) para desativar a
+simulação durante testes manuais — importe-o temporariamente onde for
+conveniente se precisar resetar o estado premium sem reinstalar o app.
+
 ## Convenções do app (React Native/Expo)
 
 - Import alias `@/*` → `app/src/*` (configurado em `app/tsconfig.json`).
@@ -222,9 +290,14 @@ Implementado (MVP, ver escopo original do produto):
    — ver seção "Notificações push" acima.
 8. Gráfico de histórico/tendência de preços — ver seção "Histórico de preços"
    acima.
+9. Monetização/paywall para alertas ilimitados (plano Grátis/Pro simulado)
+   — ver seção "Monetização" acima. Falta a integração real de pagamento
+   (RevenueCat), documentada mas não implementada por exigir sair do Expo Go.
 
-Ainda não implementado (fase 2, mencionados no prompt original do produto):
-- Monetização/paywall para alertas ilimitados.
+Todos os itens do escopo original do produto (seção 8 do prompt) estão
+implementados. O que resta é aprofundamento/produção: pagamento real,
+scraping/API com melhor cobertura de aeroportos regionais, testes
+automatizados.
 
 ## Sobre as "skills" listadas no prompt original do produto
 

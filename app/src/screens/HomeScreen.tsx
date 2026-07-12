@@ -56,11 +56,14 @@ export function HomeScreen() {
 
   const favorite = favorites.find((f) => f.origin === route.origin && f.destination === route.destination);
 
-  const toggleFavorite = () => {
+  const toggleFavorite = async () => {
     if (favorite) {
       removeFavorite(favorite.id);
-    } else {
-      addFavorite(route.origin, route.destination);
+      return;
+    }
+    const result = await addFavorite(route.origin, route.destination);
+    if (!result.ok && result.reason === "limit_reached") {
+      navigation.navigate("Paywall");
     }
   };
 

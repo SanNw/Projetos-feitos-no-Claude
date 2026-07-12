@@ -2,14 +2,18 @@ import React, { createContext, useContext, useEffect, useMemo, useState, useCall
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { FavoriteRoute } from "@/types";
 import * as api from "@/api/client";
+import { usePremium } from "./PremiumContext";
+import { FREE_FAVORITES_LIMIT } from "@/billing/constants";
 
 const STORAGE_KEY = "@monitor-passagens/favorites";
+
+export type AddFavoriteResult = { ok: true } | { ok: false; reason: "limit_reached" };
 
 interface FavoritesContextValue {
   favorites: FavoriteRoute[];
   loading: boolean;
   isFavorite: (origin: string, destination: string) => boolean;
-  addFavorite: (origin: string, destination: string) => Promise<void>;
+  addFavorite: (origin: string, destination: string) => Promise<AddFavoriteResult>;
   removeFavorite: (id: string) => Promise<void>;
   setAlertThreshold: (id: string, threshold: number | null) => Promise<void>;
   refresh: () => Promise<void>;
@@ -18,6 +22,7 @@ interface FavoritesContextValue {
 const FavoritesContext = createContext<FavoritesContextValue | undefined>(undefined);
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
+  const { isPremium } = usePremium();
   const [favorites, setFavorites] = useState<FavoriteRoute[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +58,11 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const isFavorite = (origin: string, destination: string) =>
     favorites.some((f) => f.origin === origin && f.destination === destination);
 
-  const addFavorite = async (origin: string, destination: string) => {
+  const addFavorite = async (origin: string, destination: string): Promise<AddFavoriteResult> => {
+    if (!isPremium && favorites.length >= FREE_FAVORITES_LIMIT) {
+      return { ok: false, reason: "limit_reached" };
+    }
+
     try {
       const created = await api.createFavorite(origin, destination, null);
       setFavorites((prev) => {
@@ -75,6 +84,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         return next;
       });
     }
+    return { ok: true };
   };
 
   const removeFavorite = async (id: string) => {
@@ -105,7 +115,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(
     () => ({ favorites, loading, isFavorite, addFavorite, removeFavorite, setAlertThreshold, refresh }),
-    [favorites, loading]
+    [favorites, loading, isPremium]
   );
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;

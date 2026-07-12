@@ -3,6 +3,7 @@ export type RootStackParamList = {
   RouteSelector: { field: "origin" | "destination" };
   ManualDate: undefined;
   DayDetail: { date: string };
+  Paywall: undefined;
 };
 
 export type TabParamList = {
