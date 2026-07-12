@@ -1,9 +1,9 @@
-import Constants from "expo-constants";
 import type { Airport, CalendarDay, FavoriteRoute, FlightPriceRecord, PriceHistoryPoint } from "@/types";
 import { offlineCalendar, offlineDay } from "./offlineGenerator";
+import { resolveApiUrl } from "./resolveApiUrl";
 import { AIRPORTS, DEFAULT_DESTINATION, DEFAULT_ORIGIN } from "@/data/airports";
 
-const API_URL = (Constants.expoConfig?.extra?.apiUrl as string | undefined) ?? "http://localhost:4000";
+const API_URL = resolveApiUrl();
 const REQUEST_TIMEOUT_MS = 5000;
 
 async function request<T>(pathAndQuery: string): Promise<T> {

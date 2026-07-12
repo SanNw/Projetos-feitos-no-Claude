@@ -40,10 +40,22 @@ npm start           # abre o Metro/Expo Dev Tools
 npm run typecheck
 npm test             # jest-expo
 ```
-A URL da API é lida de `app.json` → `expo.extra.apiUrl` (via `expo-constants`),
-padrão `http://localhost:4000`. Ajuste esse valor (ou use `EAS`/env override) ao
-rodar em dispositivo físico, já que `localhost` não alcança o servidor da máquina
-de desenvolvimento nesse caso.
+A URL da API é resolvida por `api/resolveApiUrl.ts`, não hardcoded:
+- Se `app.json` → `expo.extra.apiUrl` estiver configurado para algo **diferente**
+  do placeholder padrão (`http://localhost:4000`) — ex.: um backend hospedado em
+  produção — esse valor sempre vence, em dev ou produção.
+- Caso contrário, em desenvolvimento (Expo Go/dev client), deriva o host
+  automaticamente a partir do Metro bundler (`Constants.expoConfig.hostUri` —
+  o mesmo host que o dispositivo já usa para falar com o Metro). Isso resolve
+  sozinho o emulador Android (`10.0.2.2`), o simulador iOS (`localhost`) e um
+  dispositivo físico (IP da rede local), **sem editar `app.json` na mão** ao
+  trocar de alvo.
+- Fora disso, cai no placeholder padrão.
+
+Ou seja: rode o backend normalmente (`npm run dev`, porta 4000) e o app encontra
+sozinho, seja qual for o alvo (`npx expo start --android`, `--ios`, `--web`, ou
+Expo Go num celular na mesma rede). Só edite `apiUrl` manualmente para apontar
+para um backend real hospedado (fora do seu computador de desenvolvimento).
 
 ## Fonte de dados de preços — ponto mais importante para quem for mexer aqui
 
@@ -299,7 +311,7 @@ que incluir arquivos de `test/`).
 cd app
 npm test
 ```
-14 testes:
+19 testes:
 - `utils/__tests__/currency.test.ts`: `formatBRL` — atenção que
   `Intl.NumberFormat('pt-BR')` insere um **espaço não separável (U+00A0)**
   entre "R$" e o valor, não um espaço comum; os testes usam
@@ -309,6 +321,10 @@ npm test
 - `components/__tests__/PriceCalendar.test.ts`: testa `groupByMonth` (exportada
   de `PriceCalendar.tsx` só para isso) — agrupamento por mês, rótulo por
   extenso, `leadingBlanks` (alinhamento do primeiro dia da semana).
+- `api/__tests__/resolveApiUrl.test.ts`: URL explícita sempre vence, derivação
+  automática do host do Metro em dev (emulador Android, dispositivo físico),
+  fallback ao placeholder padrão sem `hostUri`, e que nada disso acontece fora
+  de `__DEV__`. `expo-constants` é mockado (`jest.mock`).
 
 Não usa `@testing-library/react-native` de propósito — nenhum teste
 renderiza componentes, só exercita funções puras extraídas deles, então essa
