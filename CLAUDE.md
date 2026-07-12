@@ -95,12 +95,49 @@ como duas implementações curtas e independentes, não uma dependência compart
 ## Cache e job periódico
 
 - `server/src/services/cache.ts`: tabelas SQLite `price_cache` (TTL de 6h, ver
-  `CACHE_TTL_MS`) e `favorites`.
+  `CACHE_TTL_MS`), `favorites` e `push_tokens`.
 - `server/src/index.ts`: ao subir, e depois a cada 6h, atualiza o cache da rota
-  padrão e roda `checkFavoriteAlerts()` (`services/alertChecker.ts`), que apenas
-  identifica rotas favoritas abaixo do limite de alerta e loga no console. Não há
-  envio de push real — isso ficaria a cargo do app via Expo push notifications,
-  consumindo o resultado desse job (ver seção "Fase 2" abaixo).
+  padrão e roda `checkFavoriteAlerts()` (`services/alertChecker.ts`).
+
+## Notificações push (alertas de preço)
+
+Fluxo ponta a ponta, sem depender de conta própria no Firebase/APNs:
+
+1. **App** (`src/notifications/registerForPushNotifications.ts`): no primeiro
+   load (`App.tsx`), pede permissão e obtém o Expo push token do dispositivo
+   (`Notifications.getExpoPushTokenAsync()`), depois registra esse token no
+   backend via `POST /api/push-tokens` (`api/client.ts` → `registerPushToken`).
+   Falha silenciosamente em qualquer etapa (emulador sem push, permissão
+   negada, backend fora do ar) — nunca bloqueia o uso do app.
+2. **Backend** (`services/cache.ts` tabela `push_tokens`): guarda os tokens
+   registrados. Sem autenticação/contas de usuário no MVP, qualquer token
+   registrado recebe notificação de qualquer favorito que dispare alerta —
+   suficiente para um app de uso pessoal/single-user.
+3. **`services/alertChecker.ts`**: a cada rota favorita com `alertThreshold`
+   definido, se o menor preço do calendário de 90 dias ficar ≤ threshold,
+   dispara `sendPushNotifications` (`services/pushNotifications.ts`, que só
+   faz um `POST` para a Expo Push API em `https://exp.host/--/api/v2/push/send`
+   — não precisa de credenciais Firebase/APNs próprias para isso).
+4. **Debounce**: `favorites.last_alert_price` guarda o preço que motivou o
+   último push enviado para aquela rota. Só reenvia se o preço mais barato
+   cair *ainda mais* do que o último notificado. Se o preço volta a ficar
+   acima do limite, o estado é resetado (`resetFavoriteAlertState`) para que a
+   próxima queda notifique de novo — sem isso, o job de 6h reenviaria a mesma
+   notificação indefinidamente enquanto o preço ficasse baixo.
+
+Limitações conhecidas / não testadas de ponta a ponta:
+- Não foi possível validar contra a Expo Push API real neste ambiente (o
+  outbound para `exp.host` não é alcançável no sandbox de desenvolvimento);
+  o código foi validado garantindo que (a) sem tokens registrados nada é
+  enviado, (b) falhas de rede/API são capturadas e logadas sem derrubar o
+  servidor, e (c) o debounce evita reenvio na mesma condição de preço.
+- Para build de produção (EAS Build), Android exige credenciais FCM (V1)
+  configuradas via `eas credentials`; iOS exige um certificado APNs (a Expo
+  gerencia isso automaticamente na maioria dos casos via EAS). Em
+  desenvolvimento (Expo Go / dev client), a Expo intermedia a entrega sem
+  configuração adicional.
+- Notificações push só funcionam em dispositivo físico (`Device.isDevice`),
+  não em emulador/simulador.
 
 ## Convenções do app (React Native/Expo)
 
@@ -159,19 +196,32 @@ Implementado (MVP, ver escopo original do produto):
 5. Favoritar rota + alerta simples de preço (limite numérico).
 6. Fonte de dados real (Amadeus Self-Service API) com fallback automático para o
    simulador — ver seção "Fonte de dados de preços" acima.
+7. Notificações push reais via Expo Push API quando um alerta de preço dispara
+   — ver seção "Notificações push" acima.
 
 Ainda não implementado (fase 2, mencionados no prompt original do produto):
 - Gráfico de histórico/tendência de preços (linha do tempo).
-- Notificações push reais (Expo push tokens) — hoje o "alerta" só é detectado no
-  backend (`checkFavoriteAlerts`) e logado no console.
 - Monetização/paywall para alertas ilimitados.
 
 ## Sobre as "skills" listadas no prompt original do produto
 
 O prompt de produto pedia para instalar várias skills de terceiros via
-`npx skills add <repo-github> ...` antes de começar (React Native, design mobile,
-scraping, pricing, Remotion etc.). Essas instalações não foram executadas neste
-repositório: elas alterariam a configuração local do Claude Code (fora do
-controle de versão deste projeto), não o código do app, e envolvem rodar pacotes
-de repositórios de terceiros não auditados. Se quiser usá-las, rode os comandos
-manualmente no seu ambiente Claude Code.
+`npx skills add <repo-github> ...` (React Native, design mobile, scraping,
+pricing, Remotion, find-skills). A pedido explícito do usuário, foram
+instaladas em `.claude/skills/` (majoritariamente markdown; a exceção é
+`ui-ux-pro-max/scripts/*.py`, scripts de busca BM25 sobre os CSVs de dados da
+própria skill — sem rede, `eval`/`exec` ou `subprocess`, conferido antes do
+commit). Vêm de repositórios de terceiros não auditados por nós; revise antes
+de confiar cegamente:
+
+- `vercel-react-native-skills`, `sleek-design-mobile-apps`, `ui-ux-pro-max`,
+  `just-scrape`, `remotion-best-practices`, `find-skills`
+- `pricing` (a skill do repo `coreyhaines31/marketingskills` se chama
+  `pricing`, não `pricing-strategy` como no prompt original)
+
+Essas pastas ficam versionadas dentro do repositório (não estão no
+`.gitignore`) porque foi assim que a ferramenta `skills add` as gravou (em
+`./.claude/skills/`, relativo ao diretório atual). Se preferir não versionar
+conteúdo de terceiros junto com o código do app, mova-as para fora do repo ou
+adicione `.claude/skills/` ao `.gitignore` e reinstale localmente quando
+precisar.

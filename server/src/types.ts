@@ -32,4 +32,6 @@ export interface FavoriteRoute {
   destination: string;
   alertThreshold: number | null;
   createdAt: string;
+  lastAlertPrice?: number | null;
+  lastAlertSentAt?: string | null;
 }

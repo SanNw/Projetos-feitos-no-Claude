@@ -30,6 +30,13 @@ db.exec(`
     origin TEXT NOT NULL,
     destination TEXT NOT NULL,
     alert_threshold REAL,
+    created_at TEXT NOT NULL,
+    last_alert_price REAL,
+    last_alert_sent_at TEXT
+  );
+
+  CREATE TABLE IF NOT EXISTS push_tokens (
+    token TEXT PRIMARY KEY,
     created_at TEXT NOT NULL
   );
 `);
@@ -89,6 +96,8 @@ export function listFavorites(): FavoriteRoute[] {
     destination: row.destination,
     alertThreshold: row.alert_threshold,
     createdAt: row.created_at,
+    lastAlertPrice: row.last_alert_price,
+    lastAlertSentAt: row.last_alert_sent_at,
   }));
 }
 
@@ -105,5 +114,33 @@ export function updateFavoriteThreshold(id: string, alertThreshold: number | nul
 
 export function removeFavorite(id: string): boolean {
   const result = db.prepare(`DELETE FROM favorites WHERE id = ?`).run(id);
+  return result.changes > 0;
+}
+
+// Debounce de alerta: registra o preço que motivou o último push enviado para
+// essa rota favorita, para não notificar de novo enquanto o preço não cair
+// ainda mais (ver services/alertChecker.ts).
+export function markFavoriteNotified(id: string, price: number): void {
+  db.prepare(`UPDATE favorites SET last_alert_price = ?, last_alert_sent_at = ? WHERE id = ?`).run(
+    price,
+    new Date().toISOString(),
+    id
+  );
+}
+
+export function resetFavoriteAlertState(id: string): void {
+  db.prepare(`UPDATE favorites SET last_alert_price = NULL, last_alert_sent_at = NULL WHERE id = ?`).run(id);
+}
+
+export function addPushToken(token: string): void {
+  db.prepare(`INSERT OR IGNORE INTO push_tokens (token, created_at) VALUES (?, ?)`).run(token, new Date().toISOString());
+}
+
+export function listPushTokens(): string[] {
+  return (db.prepare(`SELECT token FROM push_tokens`).all() as Array<{ token: string }>).map((r) => r.token);
+}
+
+export function removePushToken(token: string): boolean {
+  const result = db.prepare(`DELETE FROM push_tokens WHERE token = ?`).run(token);
   return result.changes > 0;
 }

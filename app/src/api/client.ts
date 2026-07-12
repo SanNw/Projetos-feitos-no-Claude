@@ -124,3 +124,16 @@ export async function updateFavoriteAlert(id: string, threshold: number | null):
 export async function deleteFavorite(id: string): Promise<void> {
   await fetch(`${API_URL}/api/favorites/${id}`, { method: "DELETE" });
 }
+
+export async function registerPushToken(token: string): Promise<void> {
+  try {
+    await fetch(`${API_URL}/api/push-tokens`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+  } catch {
+    // Melhor esforço: se o backend estiver fora do ar, o app segue funcionando
+    // normalmente, só sem alertas por push até o próximo registro bem-sucedido.
+  }
+}

@@ -25,6 +25,12 @@ export function FavoritesScreen() {
           data={favorites}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: 16, gap: 12 }}
+          ListHeaderComponent={
+            <Text style={styles.pushHint}>
+              Você recebe uma notificação push quando o preço cair abaixo do limite definido (é preciso permitir
+              notificações para este app).
+            </Text>
+          }
           renderItem={({ item }) => (
             <FavoriteCard
               favorite={item}
@@ -92,6 +98,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surfaceMuted },
   empty: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32 },
   emptyText: { textAlign: "center", color: colors.textSecondary, lineHeight: 20 },
+  pushHint: { color: colors.textSecondary, fontSize: 12, lineHeight: 17, marginBottom: 12 },
   card: {
     backgroundColor: colors.surface,
     borderRadius: 12,
