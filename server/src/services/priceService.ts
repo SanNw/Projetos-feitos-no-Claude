@@ -1,8 +1,11 @@
 import type { CalendarDay, FlightPriceRecord, PriceTag } from "../types.js";
 import { getCachedRecords, upsertRecords } from "./cache.js";
-import { simulatedSource } from "./scraper/simulatedSource.js";
+import { liveSource } from "./scraper/liveSource.js";
 
-const source = simulatedSource;
+// liveSource consulta a Amadeus Self-Service API quando AMADEUS_CLIENT_ID/SECRET
+// estão configuradas, e cai para o simulador (server/src/services/priceGenerator.ts)
+// automaticamente quando não há credenciais ou quando a API falha/não cobre a rota.
+const source = liveSource;
 
 function dateRange(days: number, startOffset = 0): string[] {
   const dates: string[] = [];

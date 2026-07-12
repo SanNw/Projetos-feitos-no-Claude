@@ -45,22 +45,48 @@ de desenvolvimento nesse caso.
 
 ## Fonte de dados de preços — ponto mais importante para quem for mexer aqui
 
-**Não há scraping real implementado ainda.** `server/src/services/priceGenerator.ts`
-é um simulador determinístico (PRNG com seed = hash de `origem|destino|data`) que
-gera preços plausíveis em BRL, respeitando padrões realistas (fim de semana mais
-caro, promoções ocasionais, voos internacionais em USD/EUR convertidos por uma
-taxa fixa). Ele existe para o app funcionar fim-a-fim antes de haver integração
-com fontes reais.
-
 A fonte de dados é abstraída pela interface `PriceSource`
-(`server/src/services/scraper/types.ts`), implementada hoje só por
-`simulatedSource.ts`. Para plugar uma coleta real (ex.: via skill `just-scrape`
-sobre buscadores de passagens), crie `server/src/services/scraper/liveSource.ts`
-implementando essa interface e troque a importação usada em
-`server/src/services/priceService.ts`. Respeite os termos de uso de qualquer site
-raspado.
+(`server/src/services/scraper/types.ts`). Há duas implementações:
 
-O app tem uma cópia client-side dessa mesma lógica em
+- **`simulatedSource.ts`**: simulador determinístico (PRNG com seed = hash de
+  `origem|destino|data`) que gera preços plausíveis em BRL, respeitando padrões
+  realistas (fim de semana mais caro, promoções ocasionais, voos internacionais
+  em USD/EUR convertidos por uma taxa fixa). Não depende de rede.
+- **`liveSource.ts`** (fonte usada por padrão em `priceService.ts`): consulta a
+  **Amadeus for Developers Self-Service API** (https://developers.amadeus.com,
+  free tier) via o SDK oficial `amadeus`. Optamos por uma API oficial de dados
+  de voos em vez de raspar HTML de sites como Google Flights/Skyscanner/Decolar
+  porque esses sites proíbem scraping automatizado em seus termos de uso e são
+  tecnicamente frágeis (JS pesado, anti-bot, CAPTCHA). Detalhes:
+  - **Configuração**: defina `AMADEUS_CLIENT_ID` e `AMADEUS_CLIENT_SECRET` no
+    ambiente do servidor (crie credenciais gratuitas de teste no site acima).
+    Sem essas variáveis, `liveSource` cai 100% no simulador — comportamento
+    idêntico a antes de essa integração existir.
+  - **Estratégia de chamadas**: para lotes pequenos de datas (≤ 8 — o caso do
+    "±3 dias" e do detalhe de um dia), chama `flightOffersSearch` por data
+    (preço + companhia real). Para o calendário de ~90 dias, chama
+    `flightDates` (cheapest-date-search) uma única vez para o range inteiro,
+    para não estourar cota/rate limit da API.
+  - **Fallback automático por data**: qualquer erro (rota não coberta, rate
+    limit, rede) faz aquela data específica cair para
+    `generatePriceRecord` (mesma função usada pelo simulador) — o app nunca
+    quebra por falta de cobertura.
+  - **Limitação conhecida**: o ambiente padrão (`AMADEUS_ENV` não definida, ou
+    `test`) usa um dataset estático/limitado. Aeroportos regionais pequenos
+    como **CAC (Cascavel) — a rota padrão do app — muito provavelmente não
+    têm dados reais nesse ambiente**; espere fallback para o simulador nessa
+    rota até configurar `AMADEUS_ENV=production` com uma conta paga que tenha
+    cobertura para ela. Rotas maiores (ex.: GRU↔GIG, GRU↔LIS) têm mais chance
+    de retornar dados reais mesmo no ambiente de teste.
+  - Não foi possível validar contra uma conta Amadeus real neste ambiente (sem
+    credenciais); a integração foi testada garantindo que (a) sem credenciais o
+    comportamento é idêntico ao simulador, e (b) com credenciais inválidas o
+    erro é capturado e cai para o simulador por data, sem derrubar o servidor.
+
+Para trocar de fonte (ex.: usar outra API ou voltar ao simulador puro), edite a
+única linha `const source = ...` em `server/src/services/priceService.ts`.
+
+O app tem uma cópia client-side da lógica do simulador em
 `app/src/api/offlineGenerator.ts`, usada apenas como fallback quando a API não
 responde (rede indisponível, servidor não rodando). Se o algoritmo do gerador
 mudar no servidor, replique a mudança lá também — são propositalmente mantidos
@@ -131,12 +157,13 @@ Implementado (MVP, ver escopo original do produto):
 3. Lista dos top dias mais baratos.
 4. Troca de origem/destino para qualquer aeroporto nacional/internacional da lista.
 5. Favoritar rota + alerta simples de preço (limite numérico).
+6. Fonte de dados real (Amadeus Self-Service API) com fallback automático para o
+   simulador — ver seção "Fonte de dados de preços" acima.
 
 Ainda não implementado (fase 2, mencionados no prompt original do produto):
 - Gráfico de histórico/tendência de preços (linha do tempo).
 - Notificações push reais (Expo push tokens) — hoje o "alerta" só é detectado no
   backend (`checkFavoriteAlerts`) e logado no console.
-- Scraping real de preços (ver seção acima).
 - Monetização/paywall para alertas ilimitados.
 
 ## Sobre as "skills" listadas no prompt original do produto
