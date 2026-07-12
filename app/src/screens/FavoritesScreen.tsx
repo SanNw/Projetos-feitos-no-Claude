@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, Text, TextInput, Pressable, View } from "react-native";
 import { useSelectedRoute } from "@/context/RouteContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { airportLabel } from "@/data/airports";
@@ -65,14 +65,14 @@ function FavoriteCard({
 
   return (
     <View style={styles.card}>
-      <TouchableOpacity onPress={onOpen}>
+      <Pressable style={({ pressed }) => pressed && styles.pressed} onPress={onOpen}>
         <Text style={styles.route}>
           {airportLabel(favorite.origin)} ⇄ {airportLabel(favorite.destination)}
         </Text>
         {favorite.lowestPrice != null && (
           <Text style={styles.lowest}>A partir de {formatBRL(favorite.lowestPrice)}</Text>
         )}
-      </TouchableOpacity>
+      </Pressable>
 
       <View style={styles.alertRow}>
         <Text style={styles.alertLabel}>Avisar quando abaixo de (R$)</Text>
@@ -87,9 +87,9 @@ function FavoriteCard({
         />
       </View>
 
-      <TouchableOpacity onPress={onRemove}>
+      <Pressable style={({ pressed }) => pressed && styles.pressed} onPress={onRemove}>
         <Text style={styles.remove}>Remover dos favoritos</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
@@ -122,4 +122,5 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   remove: { color: colors.expensive, fontSize: 12, fontWeight: "600" },
+  pressed: { opacity: 0.6 },
 });

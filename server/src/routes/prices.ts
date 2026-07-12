@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getCalendar, getBestDays, getDayWithNeighbors, compareOrigins } from "../services/priceService.js";
+import { getCalendar, getBestDays, getDayWithNeighbors, compareOrigins, getHistory } from "../services/priceService.js";
 
 export const pricesRouter = Router();
 
@@ -37,6 +37,15 @@ pricesRouter.get("/day", async (req, res) => {
   }
   const days = await getDayWithNeighbors(origin, destination, date);
   res.json({ origin, destination, date, days });
+});
+
+pricesRouter.get("/history", (req, res) => {
+  const { origin, destination, days } = req.query;
+  if (typeof origin !== "string" || typeof destination !== "string") {
+    return res.status(400).json({ error: "origin e destination são obrigatórios" });
+  }
+  const history = getHistory(origin, destination, parseDays(days, 90));
+  res.json({ origin, destination, history });
 });
 
 pricesRouter.get("/compare-origins", async (req, res) => {

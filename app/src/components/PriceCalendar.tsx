@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, Pressable, View } from "react-native";
 import type { CalendarDay } from "@/types";
 import { colors, tagMeta } from "@/theme/colors";
 import { monthLabel, parseDateKey } from "@/utils/date";
@@ -62,15 +62,20 @@ export function PriceCalendar({
               const meta = tagMeta[day.tag];
               const dayNumber = parseDateKey(day.date).getUTCDate();
               return (
-                <TouchableOpacity
+                <Pressable
                   key={day.date}
-                  style={[styles.cell, styles.dayCell, { backgroundColor: meta.bg }]}
+                  style={({ pressed }) => [
+                    styles.cell,
+                    styles.dayCell,
+                    tagCellStyles[day.tag],
+                    pressed && styles.dayCellPressed,
+                  ]}
                   onPress={() => onSelectDay(day.date)}
                   accessibilityLabel={`${dayNumber}, ${meta.label}, ${day.price}`}
                 >
-                  <Text style={[styles.dayNumber, { color: meta.color }]}>{dayNumber}</Text>
-                  <Text style={[styles.dayIcon, { color: meta.color }]}>{meta.icon}</Text>
-                </TouchableOpacity>
+                  <Text style={[styles.dayNumber, tagTextStyles[day.tag]]}>{dayNumber}</Text>
+                  <Text style={[styles.dayIcon, tagTextStyles[day.tag]]}>{meta.icon}</Text>
+                </Pressable>
               );
             })}
           </View>
@@ -82,7 +87,7 @@ export function PriceCalendar({
           const meta = tagMeta[tag];
           return (
             <View key={tag} style={styles.legendItem}>
-              <Text style={[styles.legendIcon, { color: meta.color }]}>{meta.icon}</Text>
+              <Text style={[styles.legendIcon, tagTextStyles[tag]]}>{meta.icon}</Text>
               <Text style={styles.legendLabel}>{meta.label}</Text>
             </View>
           );
@@ -93,6 +98,20 @@ export function PriceCalendar({
 }
 
 const CELL_SIZE = `${100 / 7}%` as const;
+
+// Hoisted no escopo do módulo (referências estáveis) em vez de montar
+// `{ backgroundColor: meta.bg }` a cada iteração do .map() — ver skill
+// vercel-react-native-skills, regra list-performance-inline-objects.
+const tagCellStyles = StyleSheet.create({
+  cheap: { backgroundColor: tagMeta.cheap.bg },
+  medium: { backgroundColor: tagMeta.medium.bg },
+  expensive: { backgroundColor: tagMeta.expensive.bg },
+});
+const tagTextStyles = StyleSheet.create({
+  cheap: { color: tagMeta.cheap.color },
+  medium: { color: tagMeta.medium.color },
+  expensive: { color: tagMeta.expensive.color },
+});
 
 const styles = StyleSheet.create({
   monthBlock: { marginBottom: 20 },
@@ -118,6 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  dayCellPressed: { opacity: 0.6 },
   dayNumber: { fontSize: 13, fontWeight: "700" },
   dayIcon: { fontSize: 9 },
   legend: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 4, marginBottom: 16 },

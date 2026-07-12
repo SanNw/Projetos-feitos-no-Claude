@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, Text, TextInput, Pressable, View } from "react-native";
 import { useNavigation, useRoute as useNavigationRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
@@ -48,7 +48,10 @@ export function RouteSelectorScreen() {
         renderItem={({ item }) => {
           const isSelected = route[field] === item.code;
           return (
-            <TouchableOpacity style={[styles.row, isSelected && styles.rowSelected]} onPress={() => select(item.code)}>
+            <Pressable
+              style={({ pressed }) => [styles.row, isSelected && styles.rowSelected, pressed && styles.rowPressed]}
+              onPress={() => select(item.code)}
+            >
               <View>
                 <Text style={styles.city}>
                   {item.city} {item.international ? `· ${item.country}` : ""}
@@ -58,7 +61,7 @@ export function RouteSelectorScreen() {
                 </Text>
               </View>
               {isSelected && <Text style={styles.check}>✓</Text>}
-            </TouchableOpacity>
+            </Pressable>
           );
         }}
       />
@@ -89,6 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   rowSelected: { backgroundColor: colors.cheapBg },
+  rowPressed: { backgroundColor: colors.surfaceMuted },
   city: { fontWeight: "700", color: colors.textPrimary },
   name: { fontSize: 12, color: colors.textSecondary, marginTop: 2 },
   check: { color: colors.cheap, fontWeight: "800", fontSize: 16 },

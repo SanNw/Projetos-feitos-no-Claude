@@ -37,3 +37,8 @@ export interface Route {
   origin: string;
   destination: string;
 }
+
+export interface PriceHistoryPoint {
+  date: string;
+  price: number;
+}

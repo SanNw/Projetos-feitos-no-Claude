@@ -7,3 +7,5 @@ dist/
 server/data/*.sqlite*
 app/.env*
 !app/.env.example
+__pycache__/
+*.pyc

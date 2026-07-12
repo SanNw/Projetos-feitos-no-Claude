@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, Pressable, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
 import { useSelectedRoute } from "@/context/RouteContext";
 import { useFavorites } from "@/context/FavoritesContext";
-import { fetchBestDays, fetchCalendar } from "@/api/client";
+import { fetchBestDays, fetchCalendar, fetchHistory } from "@/api/client";
 import { airportLabel } from "@/data/airports";
 import { colors } from "@/theme/colors";
 import { PriceCalendar } from "@/components/PriceCalendar";
 import { BestDaysList } from "@/components/BestDaysList";
-import type { CalendarDay } from "@/types";
+import { PriceHistoryChart } from "@/components/PriceHistoryChart";
+import type { CalendarDay, PriceHistoryPoint } from "@/types";
 
 const DAYS_AHEAD = 90;
 
@@ -21,16 +22,19 @@ export function HomeScreen() {
 
   const [calendar, setCalendar] = useState<CalendarDay[]>([]);
   const [bestDays, setBestDays] = useState<CalendarDay[]>([]);
+  const [history, setHistory] = useState<PriceHistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
-    const [calendarData, bestData] = await Promise.all([
+    const [calendarData, bestData, historyData] = await Promise.all([
       fetchCalendar(route.origin, route.destination, DAYS_AHEAD),
       fetchBestDays(route.origin, route.destination, DAYS_AHEAD, 8),
+      fetchHistory(route.origin, route.destination, DAYS_AHEAD),
     ]);
     setCalendar(calendarData);
     setBestDays(bestData);
+    setHistory(historyData);
   }, [route.origin, route.destination]);
 
   useEffect(() => {
@@ -68,28 +72,31 @@ export function HomeScreen() {
     >
       <View style={styles.header}>
         <View style={styles.routeRow}>
-          <TouchableOpacity
-            style={styles.airportButton}
+          <Pressable
+            style={({ pressed }) => [styles.airportButton, pressed && styles.pressed]}
             onPress={() => navigation.navigate("RouteSelector", { field: "origin" })}
           >
             <Text style={styles.airportLabel}>{airportLabel(route.origin)}</Text>
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.arrow}>⇄</Text>
-          <TouchableOpacity
-            style={styles.airportButton}
+          <Pressable
+            style={({ pressed }) => [styles.airportButton, pressed && styles.pressed]}
             onPress={() => navigation.navigate("RouteSelector", { field: "destination" })}
           >
             <Text style={styles.airportLabel}>{airportLabel(route.destination)}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <View style={styles.actionsRow}>
-          <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate("ManualDate")}>
+          <Pressable
+            style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+            onPress={() => navigation.navigate("ManualDate")}
+          >
             <Text style={styles.secondaryButtonText}>Escolher data manualmente</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.starButton} onPress={toggleFavorite}>
+          </Pressable>
+          <Pressable style={({ pressed }) => [styles.starButton, pressed && styles.pressed]} onPress={toggleFavorite}>
             <Text style={styles.starText}>{favorite ? "★" : "☆"}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
 
@@ -102,6 +109,9 @@ export function HomeScreen() {
 
           <Text style={styles.sectionTitle}>Top dias mais baratos</Text>
           <BestDaysList days={bestDays} onSelectDay={(date) => navigation.navigate("DayDetail", { date })} />
+
+          <Text style={styles.sectionTitle}>Histórico de preços</Text>
+          <PriceHistoryChart points={history} />
         </>
       )}
     </ScrollView>
@@ -142,6 +152,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   starText: { fontSize: 20, color: "#D97706" },
+  pressed: { opacity: 0.6 },
   sectionTitle: { fontSize: 18, fontWeight: "800", color: colors.textPrimary, marginBottom: 12, marginTop: 8 },
   loader: { marginTop: 40 },
 });

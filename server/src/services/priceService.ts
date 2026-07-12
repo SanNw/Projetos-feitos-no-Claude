@@ -1,5 +1,5 @@
 import type { CalendarDay, FlightPriceRecord, PriceTag } from "../types.js";
-import { getCachedRecords, upsertRecords } from "./cache.js";
+import { getCachedRecords, getPriceHistory, recordHistoryPoint, upsertRecords, type PriceHistoryPoint } from "./cache.js";
 import { liveSource } from "./scraper/liveSource.js";
 
 // liveSource consulta a Amadeus Self-Service API quando AMADEUS_CLIENT_ID/SECRET
@@ -52,7 +52,18 @@ function tagRecords(records: FlightPriceRecord[]): CalendarDay[] {
 export async function getCalendar(origin: string, destination: string, days = 90): Promise<CalendarDay[]> {
   const dates = dateRange(days);
   const records = await getRecords(origin, destination, dates);
-  return tagRecords(records);
+  const calendar = tagRecords(records);
+
+  const lowest = calendar.reduce<number | null>((min, day) => (min === null || day.price < min ? day.price : min), null);
+  if (lowest !== null) recordHistoryPoint(origin, destination, lowest);
+
+  return calendar;
+}
+
+// Série de tendência: o menor preço encontrado no calendário de 90 dias em
+// cada dia em que a rota foi consultada (ver cache.ts `recordHistoryPoint`).
+export function getHistory(origin: string, destination: string, days = 90): PriceHistoryPoint[] {
+  return getPriceHistory(origin, destination, days);
 }
 
 export async function getBestDays(

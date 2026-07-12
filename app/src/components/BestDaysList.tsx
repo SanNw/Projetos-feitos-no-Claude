@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, Pressable, View } from "react-native";
 import type { CalendarDay } from "@/types";
 import { colors } from "@/theme/colors";
 import { formatBRL } from "@/utils/currency";
@@ -16,7 +16,11 @@ export function BestDaysList({
   return (
     <View style={styles.container}>
       {days.map((day, index) => (
-        <TouchableOpacity key={day.date} style={styles.row} onPress={() => onSelectDay(day.date)}>
+        <Pressable
+          key={day.date}
+          style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+          onPress={() => onSelectDay(day.date)}
+        >
           <View style={styles.rank}>
             <Text style={styles.rankText}>{index + 1}º</Text>
           </View>
@@ -26,7 +30,7 @@ export function BestDaysList({
             <PriceBadge tag={day.tag} />
           </View>
           <Text style={styles.price}>{formatBRL(day.price)}</Text>
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   );
@@ -44,6 +48,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     gap: 12,
   },
+  rowPressed: { backgroundColor: colors.surfaceMuted },
   rank: {
     width: 32,
     height: 32,

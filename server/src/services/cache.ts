@@ -39,6 +39,18 @@ db.exec(`
     token TEXT PRIMARY KEY,
     created_at TEXT NOT NULL
   );
+
+  -- Um ponto por (rota, dia de observação): o menor preço encontrado no
+  -- calendário de 90 dias naquele dia. Ao longo de várias aberturas do app em
+  -- dias diferentes, isso forma a série de tendência (ver services/priceService.ts).
+  CREATE TABLE IF NOT EXISTS price_history (
+    origin TEXT NOT NULL,
+    destination TEXT NOT NULL,
+    date TEXT NOT NULL,
+    price REAL NOT NULL,
+    recorded_at TEXT NOT NULL,
+    PRIMARY KEY (origin, destination, date)
+  );
 `);
 
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6h - simula o intervalo do job periódico de atualização
@@ -143,4 +155,32 @@ export function listPushTokens(): string[] {
 export function removePushToken(token: string): boolean {
   const result = db.prepare(`DELETE FROM push_tokens WHERE token = ?`).run(token);
   return result.changes > 0;
+}
+
+export interface PriceHistoryPoint {
+  date: string;
+  price: number;
+}
+
+// Guarda o menor preço do dia; se a rota já foi observada hoje com um preço
+// menor, mantém o menor (MIN), em vez de sobrescrever com um valor pior.
+export function recordHistoryPoint(origin: string, destination: string, price: number): void {
+  const today = new Date().toISOString().slice(0, 10);
+  db.prepare(
+    `INSERT INTO price_history (origin, destination, date, price, recorded_at)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(origin, destination, date) DO UPDATE SET
+       price = MIN(price_history.price, excluded.price),
+       recorded_at = excluded.recorded_at`
+  ).run(origin, destination, today, price, new Date().toISOString());
+}
+
+export function getPriceHistory(origin: string, destination: string, days: number): PriceHistoryPoint[] {
+  return db
+    .prepare(
+      `SELECT date, price FROM price_history
+       WHERE origin = ? AND destination = ? AND date >= date('now', ?)
+       ORDER BY date ASC`
+    )
+    .all(origin, destination, `-${days} days`) as PriceHistoryPoint[];
 }

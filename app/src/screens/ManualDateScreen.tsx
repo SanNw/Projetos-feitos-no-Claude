@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, Pressable, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/types";
@@ -73,12 +73,12 @@ export function ManualDateScreen() {
               <Text style={[styles.selectedTag, { color: tagMeta[selected.tag].color }]}>
                 {tagMeta[selected.tag].icon} {tagMeta[selected.tag].label}
               </Text>
-              <TouchableOpacity
-                style={styles.detailButton}
+              <Pressable
+                style={({ pressed }) => [styles.detailButton, pressed && styles.pressed]}
                 onPress={() => navigation.navigate("DayDetail", { date: selected.date })}
               >
                 <Text style={styles.detailButtonText}>Ver detalhes e datas próximas</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           )}
 
@@ -118,8 +118,12 @@ function PickerRow({
         keyExtractor={(item, i) => `${item}-${i}`}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => (
-          <TouchableOpacity
-            style={[styles.pickerChip, index === selectedIndex && styles.pickerChipActive]}
+          <Pressable
+            style={({ pressed }) => [
+              styles.pickerChip,
+              index === selectedIndex && styles.pickerChipActive,
+              pressed && styles.pickerChipPressed,
+            ]}
             onPress={() => onSelect(index)}
           >
             <Text
@@ -127,7 +131,7 @@ function PickerRow({
             >
               {item}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
     </View>
@@ -149,6 +153,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   pickerChipActive: { backgroundColor: colors.brand, borderColor: colors.brand },
+  pickerChipPressed: { opacity: 0.6 },
   pickerChipText: { color: colors.textPrimary, textTransform: "capitalize" },
   pickerChipTextActive: { color: "#fff", fontWeight: "700" },
   resultSection: { marginTop: 12 },
@@ -165,6 +170,7 @@ const styles = StyleSheet.create({
   selectedAirline: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
   selectedTag: { fontWeight: "700", marginTop: 8 },
   detailButton: { marginTop: 12, alignSelf: "flex-start" },
+  pressed: { opacity: 0.6 },
   detailButtonText: { color: colors.brand, fontWeight: "700" },
   compareTitle: { fontWeight: "700", color: colors.textPrimary, marginBottom: 8 },
   compareRow: {

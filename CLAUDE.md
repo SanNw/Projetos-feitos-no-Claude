@@ -139,6 +139,28 @@ Limitações conhecidas / não testadas de ponta a ponta:
 - Notificações push só funcionam em dispositivo físico (`Device.isDevice`),
   não em emulador/simulador.
 
+## Histórico de preços (gráfico de tendência)
+
+- `server/src/services/cache.ts` tabela `price_history`: um ponto por
+  `(origin, destination, date)`, onde `date` é o **dia em que a rota foi
+  consultada** (não uma data de voo) e `price` é o menor preço encontrado no
+  calendário de 90 dias naquele dia (`MIN` em caso de múltiplas consultas no
+  mesmo dia). `services/priceService.ts` grava esse ponto toda vez que
+  `getCalendar()` roda — ou seja, o histórico se acumula organicamente com o
+  uso do app (e com o job periódico da rota padrão/favoritos).
+- `GET /api/prices/history?origin=&destination=&days=` devolve a série
+  ordenada por data.
+- App: `components/PriceHistoryChart.tsx` — gráfico de linha único (sem
+  legenda, ver skill `dataviz`: "a single series needs no legend box"),
+  renderizado com `react-native-svg` (SVG puro, sem lib de terceiros — o
+  volume de pontos, ≤90, está bem abaixo do limiar onde uma lib dedicada
+  compensaria). Arrastar o dedo sobre o gráfico mostra data/preço do ponto
+  mais próximo (equivalente touch ao hover). Estado vazio explícito quando há
+  menos de 2 pontos ("ainda não há histórico suficiente").
+- Como o histórico é dado real acumulado ao longo do tempo, **não há fallback
+  offline sintético** para ele (ao contrário do calendário/preço do dia) —
+  sem API, a tela mostra o estado vazio, o que é o comportamento honesto.
+
 ## Convenções do app (React Native/Expo)
 
 - Import alias `@/*` → `app/src/*` (configurado em `app/tsconfig.json`).
@@ -198,9 +220,10 @@ Implementado (MVP, ver escopo original do produto):
    simulador — ver seção "Fonte de dados de preços" acima.
 7. Notificações push reais via Expo Push API quando um alerta de preço dispara
    — ver seção "Notificações push" acima.
+8. Gráfico de histórico/tendência de preços — ver seção "Histórico de preços"
+   acima.
 
 Ainda não implementado (fase 2, mencionados no prompt original do produto):
-- Gráfico de histórico/tendência de preços (linha do tempo).
 - Monetização/paywall para alertas ilimitados.
 
 ## Sobre as "skills" listadas no prompt original do produto
@@ -225,3 +248,39 @@ Essas pastas ficam versionadas dentro do repositório (não estão no
 conteúdo de terceiros junto com o código do app, mova-as para fora do repo ou
 adicione `.claude/skills/` ao `.gitignore` e reinstale localmente quando
 precisar.
+
+### Como cada skill foi de fato aplicada ao código
+
+- **`ui-ux-pro-max`**: usada para decidir o tipo de gráfico do histórico de
+  preços (`python3 scripts/search.py "price trend..." --domain chart` →
+  confirmou Line Chart, SVG para <1000 pontos, sem eixo duplo) e para o
+  checklist de acessibilidade de charts (rótulo direto, tabela/estado
+  alternativo, tooltip por toque). Também usada (junto com a skill `dataviz`,
+  já embutida no agente) para validar a paleta do heatmap e do gráfico com
+  `validate_palette.js` — passou; o único WARN (separação de cor para
+  daltonismo entre "médio" e "caro") é aceitável porque o app já usa ícone +
+  texto em todo lugar, nunca só cor.
+- **`vercel-react-native-skills`**: aplicada revisando o código já escrito —
+  trocou todo `TouchableOpacity` por `Pressable` (regra `ui-pressable`) com
+  feedback visual de toque via `style={({pressed}) => ...}`, e nas listas
+  (`PriceCalendar`, `BestDaysList`, `RouteSelectorScreen`) os estilos
+  condicionais foram *hoisted* para `StyleSheet.create` no escopo do módulo em
+  vez de objetos inline por iteração (regra `list-performance-inline-objects`).
+  Conferido também: nenhum `{valor && <Text>}` com valor potencialmente
+  numérico/string vazia (regra `rendering-no-falsy-and` — todos os `&&` no
+  código já eram booleanos genuínos) e `Intl.NumberFormat` já estava hoisted
+  no escopo do módulo (regra `js-hoist-intl`).
+- **`sleek-design-mobile-apps`**: **não pôde ser aplicada** — é uma integração
+  com a API paga do sleek.design (`SLEEK_API_KEY`), não um guia local; sem uma
+  chave configurada neste ambiente, não há como gerar/consultar nada por ela.
+  Se você tiver uma conta, defina `SLEEK_API_KEY` e peça de novo.
+- **`just-scrape`**: revisada, mas a decisão de usar a Amadeus Self-Service
+  API em vez de raspar HTML (ver "Fonte de dados de preços" acima) se mantém —
+  a skill é uma ferramenta de scraping genérica e não muda o argumento de
+  ToS/robustez que motivou usar uma API oficial de voos.
+- **`pricing`**: não aplicada — instalar uma estratégia de monetização é uma
+  decisão de produto (freemium? paywall em alertas ilimitados?) que ninguém
+  pediu ainda; fica disponível para quando o assunto entrar em pauta.
+- **`remotion-best-practices`** e **`find-skills`**: não se aplicam ao código
+  do app (vídeo de demonstração e descoberta de outras skills,
+  respectivamente); ficam disponíveis para quando forem necessárias.

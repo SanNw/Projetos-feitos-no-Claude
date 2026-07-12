@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Linking, StyleSheet, Text, Pressable, View } from "react-native";
 import { useRoute as useNavigationRoute } from "@react-navigation/native";
 import { useSelectedRoute } from "@/context/RouteContext";
 import { fetchCompareOrigins, fetchDay } from "@/api/client";
@@ -61,9 +61,12 @@ export function DayDetailScreen() {
         </Text>
       )}
 
-      <TouchableOpacity style={styles.linkButton} onPress={() => Linking.openURL(day.link)}>
+      <Pressable
+        style={({ pressed }) => [styles.linkButton, pressed && styles.pressed]}
+        onPress={() => Linking.openURL(day.link)}
+      >
         <Text style={styles.linkButtonText}>Ver esse voo</Text>
-      </TouchableOpacity>
+      </Pressable>
 
       {siblingOrigins.length > 1 && (
         <View style={styles.compareSection}>
@@ -97,6 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  pressed: { opacity: 0.6 },
   linkButtonText: { color: "#fff", fontWeight: "700" },
   compareSection: { marginTop: 28 },
   compareTitle: { fontWeight: "700", color: colors.textPrimary, marginBottom: 10, fontSize: 16 },

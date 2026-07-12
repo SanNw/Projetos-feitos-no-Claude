@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import type { Airport, CalendarDay, FavoriteRoute, FlightPriceRecord } from "@/types";
+import type { Airport, CalendarDay, FavoriteRoute, FlightPriceRecord, PriceHistoryPoint } from "@/types";
 import { offlineCalendar, offlineDay } from "./offlineGenerator";
 import { AIRPORTS, DEFAULT_DESTINATION, DEFAULT_ORIGIN } from "@/data/airports";
 
@@ -71,6 +71,19 @@ export async function fetchDay(origin: string, destination: string, date: string
     return data.days;
   } catch {
     return offlineDay(origin, destination, date);
+  }
+}
+
+export async function fetchHistory(origin: string, destination: string, days = 90): Promise<PriceHistoryPoint[]> {
+  try {
+    const data = await request<{ history: PriceHistoryPoint[] }>(
+      `/api/prices/history?origin=${origin}&destination=${destination}&days=${days}`
+    );
+    return data.history;
+  } catch {
+    // Histórico é dado real acumulado ao longo do tempo — não dá pra simular
+    // offline com sentido. Sem API, a tela mostra o estado vazio.
+    return [];
   }
 }
 
