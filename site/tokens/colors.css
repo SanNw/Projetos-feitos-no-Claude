@@ -1,0 +1,50 @@
+/* ==========================================================================
+   COLOR TOKENS — Daf Encadernações (Daf Ateliê)
+   Layer 1: primitive (raw hex) → Layer 2: semantic (purpose/role)
+   Golden rule: components never reference primitives directly.
+   Source: Claude Design project "Landing page design system" — design
+   system "Ateliê de Encadernação Artesanal" (ver site/README.md).
+   ========================================================================== */
+
+:root {
+  /* ---- Primitive: Parchment (warm neutrals) ---- */
+  --color-parchment-50: #FAF6EA;   /* light ivory — cards, light surfaces */
+  --color-parchment-100: #EFE3C8;  /* parchment — default page background */
+  --color-parchment-200: #DDCBA0;  /* light leather — alternate/zebra sections */
+
+  /* ---- Primitive: Ink ---- */
+  --color-ink-900: #2B1B12;        /* ink — primary text */
+
+  /* ---- Primitive: Gold (gold leaf) ---- */
+  --color-gold-300: #D9A94B;       /* light gold — hover/glow */
+  --color-gold-600: #B8892E;       /* base gold — primary accent, CTAs */
+  --color-gold-800: #8C6418;       /* dark gold — borders, active state */
+
+  /* ---- Primitive: Lapis (lapis lazuli blue) ---- */
+  --color-lapis-600: #1B3A6B;      /* lapis — secondary accent, focus ring */
+  --color-lapis-800: #122747;      /* dark blue — hero/footer backgrounds */
+
+  /* ---- Primitive: Rubric (rubricated red) ---- */
+  --color-rubric-600: #7A1F1F;     /* rubric red — initials, sparing use only */
+
+  /* ========================================================================
+     Semantic layer — purpose-based aliases. Retheme by editing only here.
+     ======================================================================== */
+
+  --bg-page: var(--color-parchment-100);
+  --bg-surface: var(--color-parchment-50);
+  --bg-surface-alt: var(--color-parchment-200);
+  --bg-inverse: var(--color-lapis-800);
+
+  --text-primary: var(--color-ink-900);
+  --text-on-inverse: var(--color-parchment-50);
+  --text-muted: rgba(43, 27, 18, 0.65);
+  --text-muted-on-inverse: rgba(250, 246, 234, 0.7);
+
+  --color-accent-primary: var(--color-gold-600);
+  --color-accent-primary-hover: var(--color-gold-300);
+  --color-accent-secondary: var(--color-lapis-600);
+  --color-accent-tertiary: var(--color-rubric-600); /* sparing use only — never a large area */
+
+  --border-default: rgba(140, 100, 24, 0.4);
+}

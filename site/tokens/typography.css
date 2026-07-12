@@ -1,0 +1,74 @@
+/* ==========================================================================
+   TYPE TOKENS — Daf Encadernações (Daf Ateliê)
+   Fonts loaded from Google Fonts CDN (display=swap already set below —
+   ver ui-ux-pro-max: `font-loading`, evita FOIT/texto invisível).
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700;900&family=IM+Fell+English:ital@0;1&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+:root {
+  /* ---- Primitive: font families ---- */
+  --font-display: 'UnifrakturMaguntia', 'Cinzel Decorative', serif;   /* logo, hero H1 */
+  --font-heading: 'Cinzel', serif;                                    /* H2–H4, section names */
+  --font-body: 'IM Fell English', 'EB Garamond', serif;               /* reading paragraphs */
+  --font-ui: 'EB Garamond', serif;                                    /* buttons, labels, nav */
+
+  /* ---- Primitive: type scale (1.25 major-third ratio) ---- */
+  --text-xs: 0.8rem;      /* 12.8px — captions, image credits */
+  --text-sm: 1rem;        /* 16px — UI text, labels */
+  --text-base: 1.25rem;   /* 20px — body copy */
+  --text-lg: 1.563rem;    /* 25px — section lead */
+  --text-xl: 1.953rem;    /* 31px — H3 */
+  --text-2xl: 2.441rem;   /* 39px — H2 */
+  --text-3xl: 3.052rem;   /* 49px — H1 desktop */
+  --text-4xl: 3.815rem;   /* 61px — hero title */
+
+  /* ---- Primitive: line-height ----
+     Body copy leans "relaxed" on purpose — soft, generous leading is a
+     deliberate brand trait (manuscript-page readability, not cramped UI). */
+  --line-height-tight: 1.2;    /* display / headings */
+  --line-height-normal: 1.5;   /* UI text, labels */
+  --line-height-relaxed: 1.75; /* body paragraphs — the "beautiful" leading */
+
+  /* ---- Primitive: letter-spacing ---- */
+  --letter-spacing-tight: -0.02em;  /* large display titles */
+  --letter-spacing-normal: 0em;
+  --letter-spacing-wide: 0.04em;    /* uppercase buttons/labels */
+
+  /* ========================================================================
+     Semantic type roles
+     ======================================================================== */
+  --type-display-font: var(--font-display);
+  --type-display-size: var(--text-4xl);
+  --type-display-line-height: var(--line-height-tight);
+  --type-display-letter-spacing: var(--letter-spacing-tight);
+
+  --type-h1-font: var(--font-heading);
+  --type-h1-size: var(--text-3xl);
+  --type-h1-line-height: var(--line-height-tight);
+
+  --type-h2-font: var(--font-heading);
+  --type-h2-size: var(--text-2xl);
+  --type-h2-line-height: var(--line-height-tight);
+
+  --type-h3-font: var(--font-heading);
+  --type-h3-size: var(--text-xl);
+  --type-h3-line-height: var(--line-height-normal);
+
+  --type-body-lead-font: var(--font-body);
+  --type-body-lead-size: var(--text-lg);
+  --type-body-lead-line-height: var(--line-height-relaxed);
+
+  --type-body-font: var(--font-body);
+  --type-body-size: var(--text-base);
+  --type-body-line-height: var(--line-height-relaxed);
+  --type-body-letter-spacing: 0.01em; /* a hair of extra air between letters, softens the antique serif at long line-lengths */
+
+  --type-caption-font: var(--font-ui);
+  --type-caption-size: var(--text-xs);
+  --type-caption-line-height: var(--line-height-normal);
+
+  --type-button-font: var(--font-ui);
+  --type-button-size: var(--text-sm);
+  --type-button-letter-spacing: var(--letter-spacing-wide);
+}

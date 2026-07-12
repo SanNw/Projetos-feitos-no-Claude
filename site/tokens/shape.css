@@ -1,0 +1,42 @@
+/* ==========================================================================
+   SHAPE TOKENS — radius, borders, shadows, ornament, focus ring
+   The medieval-scriptorium style deliberately avoids soft rounded corners.
+   ========================================================================== */
+
+:root {
+  /* ---- Radius ---- */
+  --radius-sm: 2px;   /* near-square — the brand's default */
+  --radius-md: 4px;   /* cards, inputs */
+
+  /* ---- Borders ---- */
+  --border-hairline: 1px solid var(--color-accent-primary);
+  --border-ornamental: 3px double var(--color-accent-primary); /* use sparingly: hero frame, featured cards */
+
+  /* ---- Shadows (warm, ink-tinted — never cool gray) ---- */
+  --shadow-sm: 0 1px 3px rgba(43, 27, 18, 0.15);
+  --shadow-md: 0 4px 12px rgba(43, 27, 18, 0.25);
+
+  /* ---- Ornament (girih geometric border pattern) ---- */
+  --ornament-stroke: var(--color-accent-primary);
+  --ornament-bg-on-inverse: var(--bg-inverse);
+  --ornament-bg-on-light: transparent;
+  --ornament-height-desktop: 32px;
+  --ornament-width-desktop: 40px;
+  --ornament-height-mobile: 12px;
+
+  /* ---- Focus ---- */
+  --focus-ring: 2px solid var(--color-accent-secondary);
+  --focus-ring-offset: 2px;
+
+  /* ---- Motion ---- */
+  --transition-fast: all 0.2s ease; /* buttons, links */
+  --transition-medium: all 0.3s ease; /* cards */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

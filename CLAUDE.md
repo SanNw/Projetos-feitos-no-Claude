@@ -9,15 +9,27 @@ com rota padrão São Paulo (GRU/CGH/VCP, à escolha do usuário) ⇄ Cascavel/P
 A funcionalidade central é o calendário/heatmap de "melhores dias para viajar" nos
 próximos ~90 dias, com um modo manual de escolha de data e comparação ±3 dias.
 
-O repositório é um monorepo simples com duas pastas independentes (sem workspaces):
+O repositório é um monorepo simples com pastas independentes (sem workspaces):
 
 ```
 server/   API Node.js/Express que gera, cacheia e serve os preços
 app/      App Expo/React Native (TypeScript) que consome a API
+site/     Projeto não relacionado — ver "Outros projetos" abaixo
 ```
 
-Não existe ferramenta de monorepo (Turborepo/Nx/workspaces) de propósito — os dois
-projetos têm `package.json`, `node_modules` e ciclo de vida de dependências próprios.
+Não existe ferramenta de monorepo (Turborepo/Nx/workspaces) de propósito — os
+projetos têm `package.json` (quando aplicável), `node_modules` e ciclo de vida de
+dependências próprios.
+
+### Outros projetos no repositório
+
+O nome do repositório ("Projetos feitos no Claude") é de portfólio — nem toda
+pasta aqui é sobre o app de passagens. `site/` é um site institucional estático
+(HTML/CSS/JS, sem build) para a Daf Encadernações, um ateliê de encadernação
+artesanal fictício/de exemplo, implementado a partir de um projeto do
+Claude Design. Não compartilha código, dependências nem contexto de produto
+com `app/`/`server/` — ver `site/README.md` para detalhes (origem do design,
+decisões, limitações).
 
 ## Como rodar
 

@@ -1,0 +1,9 @@
+/* Daf Encadernações (Daf Ateliê) — Design System
+   Root stylesheet: import-only. See ./ (colors, typography, spacing, shape,
+   components). */
+
+@import 'colors.css';
+@import 'typography.css';
+@import 'spacing.css';
+@import 'shape.css';
+@import 'components.css';

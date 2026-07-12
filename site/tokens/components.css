@@ -1,0 +1,64 @@
+/* ==========================================================================
+   COMPONENT TOKENS — layer 3, references semantic tokens only
+   ========================================================================== */
+
+:root {
+  /* ---- Button: primary (CTA) ---- */
+  --button-primary-bg: var(--color-accent-primary);
+  --button-primary-bg-hover: var(--color-accent-primary-hover);
+  --button-primary-bg-active: var(--color-gold-800);
+  --button-primary-bg-disabled: var(--color-parchment-200);
+  --button-primary-text: var(--bg-page);
+  --button-primary-text-disabled: var(--text-muted);
+  --button-primary-border: 1px solid var(--color-accent-primary);
+  --button-primary-border-active: 2px solid var(--color-gold-800);
+  --button-primary-border-disabled: 1px solid transparent;
+  --button-primary-radius: var(--radius-sm);
+
+  /* ---- Button: secondary (outline) ---- */
+  --button-secondary-bg: transparent;
+  --button-secondary-bg-hover: rgba(184, 137, 46, 0.1);
+  --button-secondary-bg-active: rgba(184, 137, 46, 0.2);
+  --button-secondary-text: var(--color-accent-primary);
+  --button-secondary-text-hover: var(--color-gold-800);
+  --button-secondary-border: 1px solid var(--color-accent-primary);
+  --button-secondary-border-hover: 2px solid var(--color-accent-primary);
+  --button-secondary-radius: var(--radius-sm);
+
+  /* ---- Card ---- */
+  --card-bg: var(--bg-surface);
+  --card-border: 1px solid var(--color-accent-primary);
+  --card-border-hover: var(--border-ornamental);
+  --card-shadow: var(--shadow-sm);
+  --card-shadow-hover: var(--shadow-md);
+  --card-radius: var(--radius-md);
+  --card-padding: var(--space-6);
+
+  /* ---- Header ---- */
+  --header-bg: rgba(239, 227, 200, 0.92);
+  --header-border-bottom-height: 24px;
+  --header-link-color: var(--text-primary);
+  --header-link-color-active: var(--color-accent-primary);
+  --header-logo-font: var(--font-display);
+  --header-logo-size: var(--text-xl);
+
+  /* ---- Footer ---- */
+  --footer-bg: var(--bg-inverse);
+  --footer-color: var(--text-on-inverse);
+  --footer-border-top-height: 24px;
+  --footer-padding: var(--space-16);
+
+  /* ---- Drop cap ---- */
+  --dropcap-font: var(--font-display);
+  --dropcap-size: 3.5em;
+  --dropcap-color: var(--color-accent-tertiary);
+  --dropcap-line-height: 0.8;
+  --dropcap-margin-right: var(--space-2);
+
+  /* ---- Form ---- */
+  --form-input-bg: var(--bg-surface);
+  --form-input-border: 1px solid var(--border-default);
+  --form-input-border-focus: 2px solid var(--color-accent-primary);
+  --form-input-radius: var(--radius-sm);
+  --form-label-color: var(--text-primary);
+}

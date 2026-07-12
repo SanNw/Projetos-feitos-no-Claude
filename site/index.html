@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daf Encadernações — Encadernação Artesanal</title>
+<meta name="description" content="Belos livros feitos à mão, com materiais nobres e técnicas seculares. Encadernação em couro, restauração de livros antigos e encadernação personalizada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+
+<header class="site-header">
+  <div class="site-header__bar">
+    <a class="site-header__brand" href="#topo">Daf Encadernações</a>
+    <nav class="site-header__nav" aria-label="Navegação principal">
+      <ul>
+        <li><a href="#sobre" data-nav>Sobre</a></li>
+        <li><a href="#servicos" data-nav>Serviços</a></li>
+        <li class="nav-desktop-only"><a href="#processo" data-nav>Processo</a></li>
+        <li class="nav-desktop-only"><a href="#galeria" data-nav>Galeria</a></li>
+        <li><a href="#contato" data-nav>Contato</a></li>
+      </ul>
+    </nav>
+  </div>
+  <svg class="ornament ornament--light site-header__ornament" role="presentation" aria-hidden="true" width="100%" height="32">
+    <defs>
+      <pattern id="girih-header" width="80" height="80" patternUnits="userSpaceOnUse">
+        <g fill="none" stroke="var(--ornament-stroke)" stroke-width="1.5">
+          <rect x="1" y="1" width="78" height="78"></rect>
+          <path d="M40 1 L79 40 L40 79 L1 40 Z"></path>
+          <path d="M40 15 L65 40 L40 65 L15 40 Z"></path>
+          <circle cx="40" cy="40" r="6"></circle>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#girih-header)"></rect>
+  </svg>
+</header>
+
+<main id="conteudo">
+
+  <section id="topo" class="hero">
+    <img class="hero__image" src="assets/hero-manuscrito.png" alt="" width="800" height="356" loading="eager">
+    <div class="hero__content">
+      <h1 class="hero__title">Encadernação Artesanal</h1>
+      <p class="hero__lead">Belos livros feitos à mão, com materiais nobres e técnicas seculares.</p>
+      <a class="btn btn--primary" href="#contato">Solicitar Orçamento</a>
+    </div>
+  </section>
+
+  <section id="sobre" class="section--text">
+    <div class="section__inner section__inner--narrow">
+      <h2>Sobre o Ofício</h2>
+      <p class="about__lead"><span class="dropcap" aria-hidden="true">A</span>encadernação medieval é uma arte que combina papel de qualidade, couro e técnicas ancestrais. Cada livro é único, refletindo o cuidado de quem o encomenda e o tempo dedicado a cada etapa — da costura à folha de ouro.</p>
+      <p class="about__body">Trabalhamos com materiais nobres — couro curtido, linho, folha de ouro — e técnicas que atravessaram séculos, para produzir peças que duram gerações.</p>
+    </div>
+  </section>
+
+  <section id="servicos" class="section--alt">
+    <div class="section__inner">
+      <h2>Serviços</h2>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Encadernação em Couro</h3>
+          <p>Encadernação tradicional com couro nobre, perfeita para livros de coleção e primeiras edições.</p>
+          <div class="card__actions"><button class="btn btn--secondary btn--sm" type="button">Saber Mais</button></div>
+        </article>
+        <article class="card">
+          <h3>Restauração de Livros</h3>
+          <p>Restauramos livros antigos com técnicas respeitosas, preservando a história e a beleza original.</p>
+          <div class="card__actions"><button class="btn btn--secondary btn--sm" type="button">Saber Mais</button></div>
+        </article>
+        <article class="card">
+          <h3>Encadernação Personalizada</h3>
+          <p>Escolha papel, couro, cores e ornamentos para um livro verdadeiramente único.</p>
+          <div class="card__actions"><button class="btn btn--secondary btn--sm" type="button">Saber Mais</button></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="processo">
+    <div class="section__inner section__inner--steps">
+      <h2>Como Funciona</h2>
+      <ol class="steps">
+        <li class="step"><span class="step__num" aria-hidden="true">1</span><span class="step__label">Escolha do material</span></li>
+        <li class="step"><span class="step__num" aria-hidden="true">2</span><span class="step__label">Costura</span></li>
+        <li class="step"><span class="step__num" aria-hidden="true">3</span><span class="step__label">Acabamento em couro</span></li>
+        <li class="step"><span class="step__num" aria-hidden="true">4</span><span class="step__label">Detalhes em ouro</span></li>
+        <li class="step"><span class="step__num" aria-hidden="true">5</span><span class="step__label">Entrega</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="galeria" class="section--alt">
+    <div class="section__inner">
+      <h2>Galeria</h2>
+
+      <!-- Desktop: static grid. Hidden ≤640px in favor of the carousel below. -->
+      <div class="gallery-grid">
+        <div class="gallery-tile">[ foto do trabalho do ateliê — placeholder ]</div>
+        <div class="gallery-tile">[ foto do trabalho do ateliê — placeholder ]</div>
+        <div class="gallery-tile">[ foto do trabalho do ateliê — placeholder ]</div>
+        <div class="gallery-tile">[ foto do trabalho do ateliê — placeholder ]</div>
+      </div>
+
+      <!-- Mobile: swipeable, scroll-snapping carousel with dot pagination. -->
+      <div class="gallery-track" id="galeriaTrack">
+        <div class="gallery-tile">[ foto do ateliê — placeholder ]</div>
+        <div class="gallery-tile">[ foto do ateliê — placeholder ]</div>
+        <div class="gallery-tile">[ foto do ateliê — placeholder ]</div>
+        <div class="gallery-tile">[ foto do ateliê — placeholder ]</div>
+      </div>
+      <div class="gallery-dots" id="galeriaDots" role="tablist" aria-label="Selecionar foto da galeria"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="quotes">
+      <blockquote class="quote">
+        <p>“Encomendei a restauração do diário do meu avô — voltou como novo, mas ainda com a alma original.”</p>
+        <footer>— Marina C.</footer>
+      </blockquote>
+      <blockquote class="quote">
+        <p>“O caderno personalizado ficou exatamente como imaginei. Trabalho impecável.”</p>
+        <footer>— Tiago R.</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <section id="contato" class="section--alt">
+    <div class="section__inner section__inner--form">
+      <h2>Solicitar Orçamento</h2>
+
+      <p class="form-success" id="formSuccess" role="status" aria-live="polite" tabindex="-1" hidden>Obrigado! Entraremos em contato em breve.</p>
+
+      <form id="contactForm">
+        <div class="field">
+          <label for="nome">Nome <span class="required" aria-hidden="true">*</span></label>
+          <input type="text" id="nome" name="nome" placeholder="Seu nome completo" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="email">E-mail <span class="required" aria-hidden="true">*</span></label>
+          <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="mensagem">Mensagem</label>
+          <textarea id="mensagem" name="mensagem" rows="5" placeholder="Descreva seu projeto..."></textarea>
+        </div>
+        <button class="btn btn--primary btn--block" type="submit">Enviar</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <svg class="ornament ornament--inverse site-footer__ornament" role="presentation" aria-hidden="true" width="100%" height="24">
+    <defs>
+      <pattern id="girih-footer" width="80" height="80" patternUnits="userSpaceOnUse">
+        <g fill="none" stroke="var(--ornament-stroke)" stroke-width="1.5">
+          <rect x="1" y="1" width="78" height="78"></rect>
+          <path d="M40 1 L79 40 L40 79 L1 40 Z"></path>
+          <path d="M40 15 L65 40 L40 65 L15 40 Z"></path>
+          <circle cx="40" cy="40" r="6"></circle>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#girih-footer)"></rect>
+  </svg>
+  <div class="site-footer__inner">
+    <p class="site-footer__brand">Daf Encadernações</p>
+    <p class="site-footer__tagline">Daf Ateliê — Encadernação Artesanal</p>
+    <p class="site-footer__copy">© <span id="footerYear"></span>. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

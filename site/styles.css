@@ -1,0 +1,668 @@
+@import 'tokens/styles.css';
+
+/* ==========================================================================
+   Daf Encadernações — landing page
+   Layout/component styles that consume the design-system tokens above.
+   Repeated per-item styling (nav links, cards, process steps, quotes) lives
+   in classes here instead of inline styles, so the browser parses one rule
+   per selector instead of recomputing an inline style object per element —
+   the CSS analogue of the RN "avoid inline style objects in list items" rule.
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Keyboard users: jump straight to <main>, skipping the header/nav. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  background: var(--color-accent-primary);
+  color: var(--bg-page);
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+}
+
+.skip-link:focus {
+  left: var(--space-4);
+  top: var(--space-4);
+}
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+a,
+button {
+  touch-action: manipulation; /* removes the ~300ms tap delay on mobile browsers */
+}
+
+/* ---- Header ------------------------------------------------------------ */
+
+.site-header {
+  background: var(--header-bg);
+  backdrop-filter: blur(4px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header__bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.site-header__brand {
+  font-family: var(--header-logo-font);
+  font-size: var(--header-logo-size);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.site-header__nav ul {
+  display: flex;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-header__nav a {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--header-link-color);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding: var(--space-2) 0;
+  transition: var(--transition-fast);
+}
+
+.site-header__nav a.is-active {
+  color: var(--header-link-color-active);
+  border-bottom-color: var(--color-accent-primary);
+}
+
+.site-header__ornament {
+  height: var(--header-border-bottom-height);
+}
+
+/* ---- Ornament (girih) ---------------------------------------------------
+   The one recurring motif in the brand: a stroke-only 8-point-star pattern,
+   used exclusively as a thin frame on the header/footer edges. */
+
+.ornament {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ornament--light {
+  background: transparent;
+}
+
+.ornament--inverse {
+  background: var(--bg-inverse);
+}
+
+/* ---- Hero ---------------------------------------------------------------- */
+
+.hero {
+  background: var(--bg-inverse);
+  color: var(--text-on-inverse);
+  padding: var(--space-24) var(--space-8);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.hero__content {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  position: relative;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  line-height: var(--line-height-tight);
+  font-weight: 400;
+  margin: 0;
+}
+
+.hero__lead {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  line-height: var(--line-height-relaxed);
+  opacity: 0.92;
+  margin: 0;
+}
+
+/* ---- Buttons -------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px; /* touch target ≥44px even where the label alone would render shorter */
+  font-family: var(--type-button-font);
+  font-size: var(--type-button-size);
+  letter-spacing: var(--type-button-letter-spacing);
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: var(--space-3) var(--space-6);
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-fast);
+  border-radius: var(--button-primary-radius);
+}
+
+.btn--sm {
+  min-height: 36px;
+  padding: var(--space-2) var(--space-4);
+}
+
+.btn--primary {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: var(--button-primary-border);
+}
+
+.btn--primary:hover {
+  background: var(--button-primary-bg-hover);
+  border-color: var(--color-gold-300);
+}
+
+.btn--primary:active {
+  background: var(--button-primary-bg-active);
+  border: var(--button-primary-border-active);
+}
+
+.btn--primary:disabled {
+  background: var(--button-primary-bg-disabled);
+  color: var(--button-primary-text-disabled);
+  border: var(--button-primary-border-disabled);
+  cursor: not-allowed;
+}
+
+.btn--secondary {
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  border: var(--button-secondary-border);
+  border-radius: var(--button-secondary-radius);
+}
+
+.btn--secondary:hover {
+  background: var(--button-secondary-bg-hover);
+  color: var(--button-secondary-text-hover);
+  border: var(--button-secondary-border-hover);
+}
+
+.btn--secondary:active {
+  background: var(--button-secondary-bg-active);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* ---- Sections ------------------------------------------------------------- */
+
+section {
+  padding: var(--space-24) var(--space-8);
+}
+
+.section--alt {
+  background: var(--bg-surface-alt);
+}
+
+.section__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section__inner--narrow {
+  max-width: 900px;
+}
+
+.section__inner--form {
+  max-width: 520px;
+}
+
+.section__inner--steps {
+  max-width: 1000px;
+}
+
+h2 {
+  font-family: var(--type-h2-font);
+  font-size: var(--type-h2-size);
+  line-height: var(--type-h2-line-height);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-8) 0;
+  text-align: center;
+}
+
+.section--text h2 {
+  text-align: left;
+  margin-bottom: var(--space-6);
+}
+
+/* ---- About / Dropcap ------------------------------------------------------ */
+
+.dropcap {
+  font-family: var(--dropcap-font);
+  font-size: var(--dropcap-size);
+  line-height: var(--dropcap-line-height);
+  color: var(--dropcap-color);
+  float: left;
+  margin-right: var(--dropcap-margin-right);
+  margin-top: 0.1em;
+}
+
+.about__lead {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.about__body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  margin: var(--space-4) 0 0 0;
+  clear: both;
+}
+
+/* ---- Services (Cards) ------------------------------------------------------ */
+
+.card-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.card {
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--card-padding);
+  transition: var(--transition-medium);
+}
+
+.card:hover,
+.card:focus-within {
+  border: var(--card-border-hover);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.card h3 {
+  font-family: var(--type-h3-font);
+  font-size: var(--type-h3-size);
+  line-height: var(--type-h3-line-height);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-3) 0;
+  font-weight: 400;
+}
+
+.card p {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.card__actions {
+  margin-top: var(--space-4);
+}
+
+/* ---- Process --------------------------------------------------------------- */
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 140px;
+  text-align: center;
+}
+
+.step__num {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  color: var(--color-accent-primary);
+  flex-shrink: 0;
+}
+
+.step__label {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+/* ---- Gallery ---------------------------------------------------------------- */
+
+.gallery-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.gallery-tile {
+  aspect-ratio: 4 / 3;
+  background: var(--bg-surface-alt);
+  border: var(--border-hairline);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.gallery-track {
+  display: none; /* mobile-only carousel, enabled in the breakpoint below */
+}
+
+/* ---- Testimonials ------------------------------------------------------------ */
+
+.quotes {
+  display: grid;
+  gap: var(--space-8);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+blockquote.quote {
+  margin: 0;
+  border-left: 3px solid var(--color-accent-tertiary);
+  padding-left: var(--space-6);
+}
+
+.quote p {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  font-style: italic;
+  margin: 0;
+}
+
+.quote footer {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+}
+
+/* ---- Contact form -------------------------------------------------------------- */
+
+.field {
+  margin-bottom: var(--space-6);
+}
+
+.field label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--form-label-color);
+  margin-bottom: var(--space-2);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  min-height: 44px; /* touch-friendly-input */
+  background: var(--form-input-bg);
+  border: var(--form-input-border);
+  border-radius: var(--form-input-radius);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.5;
+  outline: none;
+  transition: var(--transition-fast);
+}
+
+.field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border: var(--form-input-border-focus);
+}
+
+.field .required {
+  color: var(--color-accent-tertiary);
+}
+
+.form-success {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* ---- Footer ------------------------------------------------------------------- */
+
+.site-footer {
+  background: var(--footer-bg);
+  color: var(--footer-color);
+}
+
+.site-footer__ornament {
+  height: var(--footer-border-top-height);
+}
+
+.site-footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--footer-padding) var(--space-8);
+  text-align: center;
+}
+
+.site-footer__brand {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  margin: 0;
+}
+
+.site-footer__tagline {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  opacity: 0.85;
+  margin-top: var(--space-3);
+}
+
+.site-footer__copy {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  opacity: 0.7;
+  margin-top: var(--space-6);
+}
+
+/* ==========================================================================
+   Mobile breakpoint (≤640px) — mirrors "Landing Page Mobile" from the
+   design project: stacked header, tighter section padding, smaller type
+   scale, single-column cards (already implied by the auto-fit grids above),
+   vertical process list, and a swipeable gallery carousel instead of a grid.
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .site-header__bar {
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-4) var(--space-6);
+    gap: var(--space-3);
+  }
+
+  .site-header__nav ul {
+    justify-content: center;
+    gap: var(--space-6);
+  }
+
+  .site-header__nav .nav-desktop-only {
+    display: none;
+  }
+
+  .hero {
+    padding: var(--space-16) var(--space-6);
+  }
+
+  .hero__title {
+    font-size: var(--text-3xl);
+  }
+
+  .hero__lead {
+    font-size: var(--text-base);
+  }
+
+  section {
+    padding: var(--space-16) var(--space-6);
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+  }
+
+  .section--text h2 {
+    margin-bottom: var(--space-6);
+  }
+
+  .steps {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-6);
+  }
+
+  .step {
+    flex-direction: row;
+    width: auto;
+    text-align: left;
+    gap: var(--space-4);
+  }
+
+  /* Swap the desktop grid for a swipeable, scroll-snapping carousel. */
+  .gallery-grid {
+    display: none;
+  }
+
+  .gallery-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-sm);
+    gap: 0;
+  }
+
+  .gallery-track .gallery-tile {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    aspect-ratio: 4 / 3;
+  }
+
+  .gallery-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .gallery-dot {
+    /* Visual dot stays 10px (matches the design), but the tappable area
+       is padded out to the 44×44px minimum touch target. */
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .gallery-dot::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--color-accent-primary);
+    background: transparent;
+    transition: var(--transition-fast);
+  }
+
+  .gallery-dot.is-active::before {
+    background: var(--color-accent-primary);
+  }
+}
+
+@media (min-width: 641px) {
+  .gallery-dots {
+    display: none;
+  }
+}
