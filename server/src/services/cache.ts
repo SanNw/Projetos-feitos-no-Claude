@@ -6,10 +6,14 @@ import type { FavoriteRoute, FlightPriceRecord } from "../types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(__dirname, "..", "..", "data");
-fs.mkdirSync(dataDir, { recursive: true });
 
-const db = new Database(path.join(dataDir, "cache.sqlite"));
-db.pragma("journal_mode = WAL");
+// CACHE_DB_PATH permite apontar para ":memory:" (ou um arquivo temporário) nos
+// testes, sem tocar o banco de desenvolvimento real em server/data/.
+const dbPath = process.env.CACHE_DB_PATH ?? path.join(dataDir, "cache.sqlite");
+if (dbPath !== ":memory:") fs.mkdirSync(dataDir, { recursive: true });
+
+const db = new Database(dbPath);
+if (dbPath !== ":memory:") db.pragma("journal_mode = WAL");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS price_cache (

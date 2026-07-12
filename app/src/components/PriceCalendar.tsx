@@ -4,14 +4,14 @@ import type { CalendarDay } from "@/types";
 import { colors, tagMeta } from "@/theme/colors";
 import { monthLabel, parseDateKey } from "@/utils/date";
 
-interface MonthGroup {
+export interface MonthGroup {
   key: string;
   label: string;
   leadingBlanks: number;
   days: CalendarDay[];
 }
 
-function groupByMonth(days: CalendarDay[]): MonthGroup[] {
+export function groupByMonth(days: CalendarDay[]): MonthGroup[] {
   const groups = new Map<string, CalendarDay[]>();
   for (const day of days) {
     const d = parseDateKey(day.date);

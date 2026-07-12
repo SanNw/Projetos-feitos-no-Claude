@@ -27,6 +27,7 @@ cd server
 npm install
 npm run dev        # tsx watch, recarrega a cada mudança
 npm run typecheck   # tsc --noEmit
+npm test            # vitest run
 ```
 Dados ficam em `server/data/cache.sqlite` (SQLite via better-sqlite3, gerado em
 runtime, ignorado pelo git).
@@ -37,6 +38,7 @@ cd app
 npm install
 npm start           # abre o Metro/Expo Dev Tools
 npm run typecheck
+npm test             # jest-expo
 ```
 A URL da API é lida de `app.json` → `expo.extra.apiUrl` (via `expo-constants`),
 padrão `http://localhost:4000`. Ajuste esse valor (ou use `EAS`/env override) ao
@@ -251,30 +253,73 @@ conveniente se precisar resetar o estado premium sem reinstalar o app.
   montar a comparação entre aeroportos de origem automaticamente — não hardcode
   a lista de três em outro lugar.
 
-## Testes — estado atual e onde investir primeiro
+## Testes automatizados
 
-Não há suite de testes automatizados ainda (projeto recém-criado). Prioridades
-recomendadas, da mais para a menos crítica:
+**Backend** (`vitest`, ESM nativo, sem transpiler extra):
+```
+cd server
+npm test          # roda uma vez (vitest run)
+npm run test:watch
+```
+28 testes em `server/test/`:
+- `priceGenerator.test.ts`: determinismo (mesma seed → mesmo preço), conversão
+  de câmbio (USD/EUR → BRL), e que preços de terça/quarta tendem a ser mais
+  baratos que sexta/sábado/domingo (checado estatisticamente sobre uma amostra
+  grande, já que "promoções" são probabilísticas).
+- `priceService.test.ts`: `tagRecords` (o dia mais barato do calendário é
+  sempre "cheap", o mais caro sempre "expensive"; os cortes de percentil
+  30/70 são respeitados para todo o resto), `getDayWithNeighbors` cruzando
+  virada de mês e de ano, `compareOrigins`, e que `getCalendar` usa um
+  registro já cacheado (`upsertRecords`) em vez de gerar de novo.
+- `cache.test.ts`: upsert idempotente (upsert duas vezes na mesma chave
+  atualiza, não duplica), expiração por TTL (usando `vi.setSystemTime` —
+  **atenção**: isso só finge o `Date` do JS, não a função `date('now')` do
+  SQLite, que lê o relógio real do SO; o teste de janela do histórico de
+  preços contorna isso "fabricando" a data no passado antes de gravar, e lendo
+  com o relógio real restaurado), CRUD de favoritos, debounce de alerta
+  (`markFavoriteNotified`/`resetFavoriteAlertState`), push tokens.
+- `alertChecker.test.ts`: dispara e envia push quando abaixo do limite, não
+  dispara quando acima, debounce (não reenvia no mesmo preço), reenvia se o
+  preço cair ainda mais, e reseta o debounce quando o preço volta a subir
+  acima do limite. `sendPushNotifications` é mockado (`vi.mock`) — os testes
+  nunca tentam alcançar `exp.host` de verdade.
 
-1. **`server/src/services/priceGenerator.ts`**: testar que a geração é
-   determinística (mesma seed → mesmo preço), que preços internacionais convertem
-   corretamente pela tabela de FX, e que o fator de fim de semana/promoção se
-   comporta como esperado. É a peça da qual tudo depende.
-2. **`server/src/services/priceService.ts`**: `tagRecords` (percentis 30/70 →
-   cheap/medium/expensive), `getDayWithNeighbors` (janela ±3 dias cruzando
-   virada de mês/ano), `getCalendar` respeitando cache (não deve re-gerar dias já
-   cacheados e válidos).
-3. **`server/src/services/cache.ts`**: upsert idempotente, TTL expirando
-   corretamente, favoritos/alertas CRUD.
-4. **Rotas Express** (`routes/*.ts`): validação de query params obrigatórios e
-   formato de data (hoje só testado manualmente via curl).
-5. **App**: `utils/currency.ts` e `utils/date.ts` (formatação pt-BR, casos de
-   borda em virada de mês), lógica de agrupamento por mês em `PriceCalendar`
-   (`groupByMonth`, alinhamento do primeiro dia da semana).
+Banco de teste: `cache.ts` lê `CACHE_DB_PATH` do ambiente (`test/setup.ts`
+define `:memory:`), então os testes nunca tocam `server/data/cache.sqlite`.
+Isso também é útil fora dos testes — para depurar com um banco descartável,
+rode com `CACHE_DB_PATH=:memory: npm run dev`.
 
-Sugestão de stack: `vitest` para `server/` (ESM nativo, sem config extra) e
-`jest-expo` + `@testing-library/react-native` para `app/`. Nenhum dos dois está
-instalado ainda.
+Dois tsconfigs por causa disso: `tsconfig.json` (inclui `src` + `test`, usado
+por `npm run typecheck`) e `tsconfig.build.json` (só `src`, com `rootDir`/
+`outDir`, usado por `npm run build` — `tsc` reclama se `rootDir: src` tiver
+que incluir arquivos de `test/`).
+
+**App** (`jest-expo`):
+```
+cd app
+npm test
+```
+14 testes:
+- `utils/__tests__/currency.test.ts`: `formatBRL` — atenção que
+  `Intl.NumberFormat('pt-BR')` insere um **espaço não separável (U+00A0)**
+  entre "R$" e o valor, não um espaço comum; os testes usam
+  `String.fromCharCode(160)` explicitamente porque um literal com espaço
+  normal parece idêntico no editor/terminal mas falha em `toBe`.
+- `utils/__tests__/date.test.ts`: formatação pt-BR, virada de ano.
+- `components/__tests__/PriceCalendar.test.ts`: testa `groupByMonth` (exportada
+  de `PriceCalendar.tsx` só para isso) — agrupamento por mês, rótulo por
+  extenso, `leadingBlanks` (alinhamento do primeiro dia da semana).
+
+Não usa `@testing-library/react-native` de propósito — nenhum teste
+renderiza componentes, só exercita funções puras extraídas deles, então essa
+dependência (mais pesada) não foi adicionada.
+
+**O que ainda não tem teste automatizado**: rotas Express (validação de query
+params, hoje só testada manualmente via curl — ver seção de scraper/fonte de
+dados para os comandos), `liveSource.ts` (não dá pra testar contra a Amadeus
+real sem credenciais), o módulo `billing/` do app (mockProvider é simples o
+bastante para não ter sido priorizado), e a integração ponta-a-ponta do app
+(precisaria de Detox ou similar, não configurado).
 
 ## O que é MVP vs. Fase 2
 
