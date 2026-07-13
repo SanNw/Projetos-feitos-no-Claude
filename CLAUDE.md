@@ -12,11 +12,10 @@ próximos ~90 dias, com um modo manual de escolha de data e comparação ±3 dia
 O repositório é um monorepo simples com pastas independentes (sem workspaces):
 
 ```
-server/           API Node.js/Express que gera, cacheia e serve os preços
-app/               App Expo/React Native (TypeScript) que consome a API
-book-finder-web/  Segundo projeto, não relacionado: "Achalivros" — busca de
-book-finder-app/  livros (web + mobile). Ver "Segundo projeto" no fim deste
-                   arquivo e os READMEs de cada pasta.
+server/       API Node.js/Express que gera, cacheia e serve os preços
+app/          App Expo/React Native (TypeScript) que consome a API
+Achalivros/   Segundo projeto, não relacionado: busca de livros (web + mobile).
+              Ver "Segundo projeto" no fim deste arquivo e os READMEs de cada pasta.
 ```
 
 Não existe ferramenta de monorepo (Turborepo/Nx/workspaces) de propósito — os
@@ -426,17 +425,18 @@ precisar.
 
 ## Segundo projeto: Achalivros / Book Finder
 
-`book-finder-web/` e `book-finder-app/` são um segundo produto, **sem relação**
-com o monitor de passagens descrito acima — só compartilham este repositório
-(monorepo de conveniência, sem workspaces, mesmo padrão de pastas
-independentes). App de busca de livros (título/autor/assunto) com capa,
-edição e download em PDF/EPUB quando a obra é de domínio público. Web (Vite +
-React) e mobile (Expo/React Native) são duas implementações independentes da
-mesma lógica de busca, cada uma com sua própria cópia de `src/lib/` — mesmo
-padrão já usado entre `server/` e `app/` acima (fonte plugável, sem dependência
-compartilhada entre pastas).
+`Achalivros/book-finder-web/` e `Achalivros/book-finder-app/` são um segundo
+produto, **sem relação** com o monitor de passagens descrito acima — só
+compartilham este repositório (monorepo de conveniência, sem workspaces,
+mesmo padrão de pastas independentes, agora agrupadas sob `Achalivros/` para
+deixar claro que são um produto à parte). App de busca de livros
+(título/autor/assunto) com capa, edição e download em PDF/EPUB quando a obra
+é de domínio público. Web (Vite + React) e mobile (Expo/React Native) são
+duas implementações independentes da mesma lógica de busca, cada uma com sua
+própria cópia de `src/lib/` — mesmo padrão já usado entre `server/` e `app/`
+acima (fonte plugável, sem dependência compartilhada entre pastas).
 
 Detalhes completos (fontes de dados, por que Anna's Archive/LibGen ficaram de
 fora, paleta retrô, como rodar) estão nos READMEs de cada pasta —
-`book-finder-web/README.md` e `book-finder-app/README.md` — para não misturar
-com a documentação do projeto de passagens acima.
+`Achalivros/book-finder-web/README.md` e `Achalivros/book-finder-app/README.md`
+— para não misturar com a documentação do projeto de passagens acima.
