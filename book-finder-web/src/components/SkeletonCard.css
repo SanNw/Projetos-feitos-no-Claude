@@ -1,0 +1,73 @@
+.skeleton-card {
+  display: flex;
+  gap: var(--space-3);
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  height: 100%;
+}
+
+.skeleton-card__cover {
+  flex-shrink: 0;
+  width: 96px;
+  height: 144px;
+  border-radius: 3px;
+}
+
+.skeleton-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
+}
+
+.skeleton-card__line {
+  height: 12px;
+  border-radius: 4px;
+}
+
+.skeleton-card__line--badge {
+  width: 40%;
+  height: 16px;
+}
+
+.skeleton-card__line--title {
+  width: 85%;
+  height: 18px;
+}
+
+.skeleton-card__line--meta {
+  width: 60%;
+}
+
+.skeleton-card__line--text {
+  width: 100%;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-bg) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+  }
+}

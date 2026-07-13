@@ -1,0 +1,120 @@
+:root {
+  color-scheme: light;
+
+  --color-bg: #fffbeb;
+  --color-bg-alt: #f5eedc;
+  --color-fg: #241c15;
+  --color-fg-muted: #6b5c47;
+  --color-primary: #92400e;
+  --color-accent: #d97706;
+  --color-accent-fg: #fffbeb;
+  --color-border: #d8cca8;
+  --color-destructive: #b3261e;
+  --color-ring: #92400e;
+  --shadow-card: 0 3px 0 var(--color-border), 0 6px 14px rgba(36, 28, 21, 0.12);
+
+  --font-display: "Abril Fatface", "Playfair Display", serif;
+  --font-body: "Merriweather", Georgia, serif;
+
+  --radius: 6px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #1b140d;
+  --color-bg-alt: #241b12;
+  --color-fg: #f3e9d2;
+  --color-fg-muted: #c2ac89;
+  --color-primary: #e8a33d;
+  --color-accent: #e8a33d;
+  --color-accent-fg: #1b140d;
+  --color-border: #4a3b28;
+  --color-destructive: #ef5350;
+  --color-ring: #e8a33d;
+  --shadow-card: 0 3px 0 var(--color-border), 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-bg: #1b140d;
+    --color-bg-alt: #241b12;
+    --color-fg: #f3e9d2;
+    --color-fg-muted: #c2ac89;
+    --color-primary: #e8a33d;
+    --color-accent: #e8a33d;
+    --color-accent-fg: #1b140d;
+    --color-border: #4a3b28;
+    --color-destructive: #ef5350;
+    --color-ring: #e8a33d;
+    --shadow-card: 0 3px 0 var(--color-border), 0 6px 14px rgba(0, 0, 0, 0.4);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(36, 28, 21, 0.05) 1px, transparent 0);
+  background-size: 22px 22px;
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100dvh;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

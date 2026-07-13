@@ -1,0 +1,32 @@
+.error-state {
+  max-width: 480px;
+  margin: var(--space-6) auto;
+  text-align: center;
+  padding: var(--space-4);
+  border: 1px dashed var(--color-destructive);
+  border-radius: var(--radius);
+  color: var(--color-fg);
+}
+
+.error-state__title {
+  font-size: 22px;
+  color: var(--color-destructive);
+  margin-bottom: var(--space-2);
+}
+
+.error-state__text {
+  margin: 0 0 var(--space-3);
+  font-size: 14px;
+  color: var(--color-fg-muted);
+}
+
+.error-state__button {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  font-weight: 700;
+  cursor: pointer;
+}
