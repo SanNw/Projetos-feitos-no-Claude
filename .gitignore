@@ -4,8 +4,5 @@ dist/
 .expo-shared/
 *.log
 .DS_Store
-server/data/*.sqlite*
-app/.env*
-!app/.env.example
 __pycache__/
 *.pyc
