@@ -36,19 +36,6 @@ Se uma fonte falhar (rede, rate limit), as outras duas continuam funcionando —
 o app mostra um aviso discreto em vez de quebrar a busca inteira
 (`failedSources` em `useBookSearch`).
 
-### Por que não Anna's Archive / LibGen
-
-O pedido original citava Anna's Archive e LibGen como fontes. Não foram
-integradas: são bibliotecas-sombra que hospedam obras com direitos autorais
-sem autorização dos titulares — usá-las facilitaria violação de copyright.
-Também foi descartado o wrapper RapidAPI de Project Gutenberg sugerido no
-pedido, em favor do Gutendex (mesmo catálogo público, sem exigir chave paga).
-
-**Nota de segurança:** uma chave do RapidAPI (`53d5bfd757...`) foi colada em
-texto puro na conversa que originou este projeto. Ela não foi usada em nenhum
-lugar do código — mas como ficou exposta em texto simples, é recomendável
-revogá-la/girá-la no painel do RapidAPI.
-
 ## Identidade visual (retrô)
 
 Paleta e tipografia geradas com a skill `ui-ux-pro-max` (busca
