@@ -1,8 +1,13 @@
 import type { BookResult } from "../types";
+import { DownloadButton } from "./DownloadButton";
+import { languageName } from "../lib/languages";
 import "./BookCard.css";
 
 const SOURCE_LABEL: Record<BookResult["source"], string> = {
   gutenberg: "Domínio público",
+  archive: "Domínio público",
+  standardebooks: "Domínio público",
+  libgen: "Library Genesis",
   google: "Google Books",
   openlibrary: "Open Library",
 };
@@ -42,6 +47,18 @@ export function BookCard({ book }: Props) {
           {authors}
           {book.publishedDate ? ` · ${book.publishedDate}` : ""}
         </p>
+        {(book.language || (book.categories && book.categories.length > 0)) && (
+          <div className="book-card__tags">
+            {book.language && (
+              <span className="book-card__tag book-card__tag--lang">{languageName(book.language)}</span>
+            )}
+            {book.categories?.map((category) => (
+              <span key={category} className="book-card__tag">
+                {category}
+              </span>
+            ))}
+          </div>
+        )}
         {book.description && <p className="book-card__description">{book.description}</p>}
 
         <div className="book-card__actions">
@@ -54,24 +71,10 @@ export function BookCard({ book }: Props) {
             Mais informações ↗
           </a>
           {book.downloads?.epub && (
-            <a
-              className="book-card__download"
-              href={book.downloads.epub}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              EPUB
-            </a>
+            <DownloadButton label="EPUB" candidates={book.downloads.epub} />
           )}
           {book.downloads?.pdf && (
-            <a
-              className="book-card__download"
-              href={book.downloads.pdf}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              PDF
-            </a>
+            <DownloadButton label="PDF" candidates={book.downloads.pdf} />
           )}
         </div>
       </div>
