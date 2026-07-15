@@ -1,4 +1,5 @@
 import type { BookResult } from "../types";
+import { normalizeLanguageCode } from "./languages";
 
 interface GutendexAuthor {
   name: string;
@@ -9,6 +10,8 @@ interface GutendexBook {
   title: string;
   authors?: GutendexAuthor[];
   formats?: Record<string, string>;
+  languages?: string[];
+  subjects?: string[];
 }
 
 interface GutendexResponse {
@@ -38,10 +41,12 @@ export async function searchGutenberg(
       title: book.title,
       authors: (book.authors ?? []).map((a) => a.name),
       thumbnail: formats["image/jpeg"],
+      language: book.languages?.[0] ? normalizeLanguageCode(book.languages[0]) : undefined,
+      categories: book.subjects?.slice(0, 3),
       infoLink: `https://www.gutenberg.org/ebooks/${book.id}`,
       downloads: {
-        epub: formats["application/epub+zip"],
-        pdf: formats["application/pdf"],
+        epub: formats["application/epub+zip"] ? [formats["application/epub+zip"]] : undefined,
+        pdf: formats["application/pdf"] ? [formats["application/pdf"]] : undefined,
       },
     };
   });

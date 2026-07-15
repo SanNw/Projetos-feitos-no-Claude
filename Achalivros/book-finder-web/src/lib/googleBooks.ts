@@ -1,4 +1,5 @@
 import type { BookResult } from "../types";
+import { normalizeLanguageCode } from "./languages";
 
 interface GoogleVolume {
   id: string;
@@ -9,6 +10,8 @@ interface GoogleVolume {
     description?: string;
     infoLink?: string;
     imageLinks?: { thumbnail?: string; smallThumbnail?: string };
+    language?: string;
+    categories?: string[];
   };
   accessInfo?: {
     epub?: { isAvailable?: boolean; downloadLink?: string };
@@ -22,6 +25,12 @@ interface GoogleBooksResponse {
 
 function toHttps(url: string | undefined): string | undefined {
   return url?.replace(/^http:\/\//, "https://");
+}
+
+function accessLink(access?: { isAvailable?: boolean; downloadLink?: string }): string[] | undefined {
+  if (!access?.isAvailable) return undefined;
+  const url = toHttps(access.downloadLink);
+  return url ? [url] : undefined;
 }
 
 export async function searchGoogleBooks(
@@ -51,10 +60,12 @@ export async function searchGoogleBooks(
       publishedDate: info.publishedDate,
       description: info.description,
       thumbnail: toHttps(info.imageLinks?.thumbnail ?? info.imageLinks?.smallThumbnail),
+      language: info.language ? normalizeLanguageCode(info.language) : undefined,
+      categories: info.categories,
       infoLink: toHttps(info.infoLink) ?? `https://books.google.com/books?id=${item.id}`,
       downloads: {
-        epub: item.accessInfo?.epub?.isAvailable ? toHttps(item.accessInfo.epub.downloadLink) : undefined,
-        pdf: item.accessInfo?.pdf?.isAvailable ? toHttps(item.accessInfo.pdf.downloadLink) : undefined,
+        epub: accessLink(item.accessInfo?.epub),
+        pdf: accessLink(item.accessInfo?.pdf),
       },
     };
   });
