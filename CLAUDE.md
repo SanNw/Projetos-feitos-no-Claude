@@ -58,6 +58,12 @@ Cada implementação tem sua própria variante escura completa (testada
 separadamente para contraste, não é apenas inversão de cores) — ver
 `src/styles/global.css` (web) e `src/theme/colors.ts` (mobile).
 
+**Logo:** marca em `Achalivros/brand/logo/` (conceito “marcador de página como
+cursor” — um “A” bold com fita de marcador saindo do vértice). SVG puro,
+variantes clara/escura e monocromática, `preview.html` para conferir escala.
+Gerada com a skill `svg-design` (marketplace `tryopendata/skills`); detalhes e
+uso no `README.md` da pasta.
+
 ## Skills instaladas em `.claude/skills/`
 
 Vêm de repositórios de terceiros não auditados por nós; revise antes de

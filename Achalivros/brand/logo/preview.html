@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>achalivros — logo preview</title>
+<style>
+  :root { --ink:#241C15; --paper:#FFFBEB; --amber:#D97706; --brown:#92400E; --line:#E7Dcc4; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 24px 56px;
+    background: var(--paper); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header { max-width: 1080px; margin: 0 auto 28px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: .2px; }
+  .sub { color: var(--brown); font-size: 14px; }
+  .panels { max-width: 1080px; margin: 0 auto; display: grid; gap: 20px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 760px) { .panels { grid-template-columns: 1fr; } }
+  .panel { border-radius: 16px; padding: 20px 20px 24px; border: 1px solid var(--line); }
+  .panel.light { background: #ffffff; }
+  .panel.dark  { background: #1A1A2E; border-color: #2c2c46; }
+  .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px; margin: 0 0 16px; font-weight: 700; }
+  .panel.light h2 { color: #6b6250; }
+  .panel.dark  h2 { color: #b9b6cf; }
+  .row { display: flex; align-items: flex-end; gap: 22px; padding: 14px 4px; border-top: 1px dashed var(--line); }
+  .panel.dark .row { border-top-color: #2c2c46; }
+  .row:first-of-type { border-top: 0; }
+  .rowlabel { flex: 0 0 96px; font-size: 12px; line-height: 1.35; }
+  .panel.light .rowlabel { color: #6b6250; }
+  .panel.dark  .rowlabel { color: #9d9ab6; }
+  .rowlabel b { display: block; font-size: 12.5px; color: inherit; }
+  .panel.light .rowlabel b { color: var(--ink); }
+  .panel.dark  .rowlabel b { color: #efeef7; }
+  .specimens { display: flex; align-items: flex-end; gap: 22px; flex-wrap: wrap; }
+  .sz { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .sz img { display: block; }
+  .sz span { font-size: 10px; opacity: .6; }
+  .s200 { width: 200px; height: 200px; }
+  .s64  { width: 64px;  height: 64px; }
+  .s32  { width: 32px;  height: 32px; }
+  .mono-on-dark { filter: invert(94%) sepia(6%) saturate(120%) hue-rotate(200deg) brightness(104%); }
+  .note { max-width: 1080px; margin: 22px auto 0; font-size: 12.5px; color: var(--brown); line-height: 1.55; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>achalivros — identidade visual</h1>
+    <div class="sub">Conceito “marcador de página como cursor” · avaliação de legibilidade em escala</div>
+  </header>
+
+  <div class="panels">
+    <!-- LIGHT -->
+    <section class="panel light">
+      <h2>Fundo claro</h2>
+
+      <div class="row">
+        <div class="rowlabel"><b>Cor · vermelho</b>#1A1A2E + #E63946</div>
+        <div class="specimens">
+          <div class="sz"><img class="s200" src="./achalivros-logo-color.svg" alt=""><span>200px</span></div>
+          <div class="sz"><img class="s64"  src="./achalivros-logo-color.svg" alt=""><span>64px</span></div>
+          <div class="sz"><img class="s32"  src="./achalivros-logo-color.svg" alt=""><span>32px</span></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="rowlabel"><b>Cor · laranja</b>#1A1A2E + #F4A261</div>
+        <div class="specimens">
+          <div class="sz"><img class="s200" src="./achalivros-logo-color-orange.svg" alt=""><span>200px</span></div>
+          <div class="sz"><img class="s64"  src="./achalivros-logo-color-orange.svg" alt=""><span>64px</span></div>
+          <div class="sz"><img class="s32"  src="./achalivros-logo-color-orange.svg" alt=""><span>32px</span></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="rowlabel"><b>Monocromático</b>contorno #1A1A2E</div>
+        <div class="specimens">
+          <div class="sz"><img class="s200" src="./achalivros-logo-mono.svg" alt=""><span>200px</span></div>
+          <div class="sz"><img class="s64"  src="./achalivros-logo-mono.svg" alt=""><span>64px</span></div>
+          <div class="sz"><img class="s32"  src="./achalivros-logo-mono.svg" alt=""><span>32px</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DARK -->
+    <section class="panel dark">
+      <h2>Fundo escuro</h2>
+
+      <div class="row">
+        <div class="rowlabel"><b>Cor · vermelho</b>variante -dark</div>
+        <div class="specimens">
+          <div class="sz"><img class="s200" src="./achalivros-logo-color-dark.svg" alt=""><span>200px</span></div>
+          <div class="sz"><img class="s64"  src="./achalivros-logo-color-dark.svg" alt=""><span>64px</span></div>
+          <div class="sz"><img class="s32"  src="./achalivros-logo-color-dark.svg" alt=""><span>32px</span></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="rowlabel"><b>Cor · laranja</b>variante -dark</div>
+        <div class="specimens">
+          <div class="sz"><img class="s200" src="./achalivros-logo-color-orange-dark.svg" alt=""><span>200px</span></div>
+          <div class="sz"><img class="s64"  src="./achalivros-logo-color-orange-dark.svg" alt=""><span>64px</span></div>
+          <div class="sz"><img class="s32"  src="./achalivros-logo-color-orange-dark.svg" alt=""><span>32px</span></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="rowlabel"><b>Monocromático</b>recolorido p/ escuro</div>
+        <div class="specimens">
+          <div class="sz"><img class="s200 mono-on-dark" src="./achalivros-logo-mono.svg" alt=""><span>200px</span></div>
+          <div class="sz"><img class="s64  mono-on-dark" src="./achalivros-logo-mono.svg" alt=""><span>64px</span></div>
+          <div class="sz"><img class="s32  mono-on-dark" src="./achalivros-logo-mono.svg" alt=""><span>32px</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <p class="note">
+    Observações de escala: a versão <b>colorida</b> mantém leitura de “A + marcador” até 32px (favicon/avatar de bot) — o
+    recorte em V da fita se simplifica em ponto, mas o contraste tinta/âmbar preserva a forma. A versão <b>monocromática</b>
+    (só contorno) foi pensada para 48px+ (papelaria, carimbo, 1 cor); abaixo disso as linhas internas se aproximam. Para
+    fundo escuro use as variantes <code>-dark</code> (o “A” fica off-white; a fita mantém a cor de destaque).
+  </p>
+</body>
+</html>
