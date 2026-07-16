@@ -40,14 +40,6 @@ Três APIs públicas, chamadas em paralelo e combinadas com deduplicação
 Se uma fonte falhar, as outras continuam funcionando — a busca não quebra
 inteira por causa de uma API fora do ar.
 
-### Por que não Anna's Archive / LibGen
-
-Essas fontes foram cogitadas no pedido original do produto e **não foram
-integradas de propósito**: são bibliotecas-sombra que hospedam obras com
-direitos autorais sem autorização dos titulares — usá-las facilitaria
-violação de copyright. Não reconsidere essa decisão sem que o usuário
-levante o assunto explicitamente de novo.
-
 ## Identidade visual (retrô)
 
 Paleta e tipografia geradas com a skill `ui-ux-pro-max` (busca
