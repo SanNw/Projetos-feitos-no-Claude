@@ -85,3 +85,9 @@ passagens aéreas, pastas `server/`/`app/`) — removido a pedido do usuário.
 O histórico de commits anterior a essa remoção ainda existe no git caso seja
 preciso consultar decisões antigas, mas o código não faz mais parte do
 repositório.
+
+Também hospedou o **Religio Wiki** (pasta `Religio Wiki/`, wiki de
+religiões em MediaWiki) até virar seu próprio repositório:
+[github.com/SanNw/religio-wiki](https://github.com/SanNw/religio-wiki) —
+histórico de commits extraído via `git subtree split`, preservando as
+mudanças feitas enquanto era uma subpasta aqui.
